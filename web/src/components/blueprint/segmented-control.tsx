@@ -1,0 +1,63 @@
+"use client";
+
+import * as React from "react";
+import { cn } from "@/lib/utils";
+
+export interface SegmentedOption<T extends string> {
+  label: string;
+  value: T;
+}
+
+interface SegmentedControlProps<T extends string> {
+  options: SegmentedOption<T>[];
+  value: T;
+  onValueChange: (value: T) => void;
+  className?: string;
+  "aria-label"?: string;
+}
+
+/**
+ * The `.seg` segmented control: a hairline-bordered row of options where the
+ * active one fills with the accent colour. Generic over its value type.
+ */
+export function SegmentedControl<T extends string>({
+  options,
+  value,
+  onValueChange,
+  className,
+  "aria-label": ariaLabel,
+}: SegmentedControlProps<T>) {
+  return (
+    <div
+      role="radiogroup"
+      aria-label={ariaLabel}
+      className={cn(
+        "inline-flex overflow-hidden rounded-none border border-divider",
+        className,
+      )}
+    >
+      {options.map((option) => {
+        const active = option.value === value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => onValueChange(option.value)}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-[7px] text-[13px] transition-colors",
+              "border-l border-divider first:border-l-0 cursor-pointer",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
+              active
+                ? "bg-accent text-on-accent"
+                : "text-text hover:bg-[color-mix(in_srgb,var(--color-text)_7%,transparent)]",
+            )}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
