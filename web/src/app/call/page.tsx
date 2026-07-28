@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useCall } from "@/hooks/use-call";
+import { useFriends } from "@/hooks/use-friends";
 import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
 import { useTimeout } from "@/hooks/use-timeout";
 import { formatDuration } from "@/lib/utils";
@@ -15,7 +16,8 @@ import { CallControlBar } from "@/components/screens/call/call-control-bar";
 
 export function CallScreen() {
 	const router = useRouter();
-	const { activeFriend, callType, addRandomFriend } = useAppState();
+	const { activeFriend, callType } = useCall();
+	const { addRandomFriend } = useFriends();
 
 	const isVideo = callType !== "voice";
 	const isFriendCall = activeFriend !== null;

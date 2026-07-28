@@ -90,6 +90,6 @@ export const MICROPHONE_DEVICES: DeviceOption[] = [
 ];
 
 export const DEFAULT_PROFILE = {
-	name: "Alex Rivera",
-	email: "alex.rivera@gmail.com",
+	name: "Manish Sheela",
+	email: "manish.faceflip@gmail.com",
 } as const;

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AppProvider } from "@/context/app-provider";
+import { AppProviders } from "@/context/app-providers";
 import { AppShell } from "@/components/layout/app-shell";
 import { APP_NAME } from "@/constants";
 
@@ -30,9 +30,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <AppProvider>
+        <AppProviders>
           <AppShell>{children}</AppShell>
-        </AppProvider>
+        </AppProviders>
       </body>
     </html>
   );

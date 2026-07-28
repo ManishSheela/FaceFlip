@@ -3,7 +3,11 @@
 import { usePathname, useRouter } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { APP_NAME, ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useAuth } from "@/hooks/use-auth";
+import { useFriends } from "@/hooks/use-friends";
+import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useProfile } from "@/hooks/use-profile";
+import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
@@ -21,15 +25,11 @@ const CHROMELESS_ROUTES: string[] = [ROUTES.call];
 export function Navbar() {
 	const router = useRouter();
 	const pathname = usePathname();
-	const {
-		theme,
-		toggleTheme,
-		loggedIn,
-		genderPref,
-		setGenderPref,
-		profileName,
-		requests,
-	} = useAppState();
+	const { theme, toggleTheme } = useTheme();
+	const { loggedIn } = useAuth();
+	const { genderPref, setGenderPref } = useMatchPreference();
+	const { profileName } = useProfile();
+	const { requests } = useFriends();
 
 	if (CHROMELESS_ROUTES.includes(pathname)) return null;
 

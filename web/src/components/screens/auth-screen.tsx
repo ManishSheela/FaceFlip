@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useAuth } from "@/hooks/use-auth";
+import { useMatchPreference } from "@/hooks/use-match-preference";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
@@ -11,7 +12,8 @@ import { GoogleIcon } from "@/components/icons/google-icon";
 
 export function AuthScreen() {
 	const router = useRouter();
-	const { setLoggedIn, setGenderPref } = useAppState();
+	const { setLoggedIn } = useAuth();
+	const { setGenderPref } = useMatchPreference();
 
 	const continueWithGoogle = () => {
 		setLoggedIn(true);

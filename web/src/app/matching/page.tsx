@@ -9,7 +9,9 @@ import {
 	ONLINE_COUNT,
 	ROUTES,
 } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useAuth } from "@/hooks/use-auth";
+import { useCall } from "@/hooks/use-call";
+import { useMatchPreference } from "@/hooks/use-match-preference";
 import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
 import { useTimeout } from "@/hooks/use-timeout";
 import { formatDuration } from "@/lib/utils";
@@ -27,7 +29,9 @@ const TARGET_CORNERS = [
 
 export function MatchingScreen() {
 	const router = useRouter();
-	const { genderPref, startStrangerCall, loggedIn } = useAppState();
+	const { loggedIn } = useAuth();
+	const { genderPref } = useMatchPreference();
+	const { startStrangerCall } = useCall();
 	const elapsed = useElapsedTimer(true);
 
 	useEffect(() => {

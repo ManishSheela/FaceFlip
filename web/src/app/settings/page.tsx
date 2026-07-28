@@ -15,7 +15,10 @@ import {
 	MICROPHONE_DEVICES,
 	ROUTES,
 } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useAuth } from "@/hooks/use-auth";
+import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useProfile } from "@/hooks/use-profile";
+import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
 import type { GenderPref, Theme } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -53,13 +56,10 @@ export function SettingsScreen() {
 	const searchParams = useSearchParams();
 	const fromCall = searchParams.get("from") === "call";
 
+	const { loggedIn, setLoggedIn } = useAuth();
+	const { genderPref, setGenderPref } = useMatchPreference();
+	const { theme, setTheme } = useTheme();
 	const {
-		loggedIn,
-		setLoggedIn,
-		genderPref,
-		setGenderPref,
-		theme,
-		setTheme,
 		profileName,
 		setProfileName,
 		profileEmail,
@@ -71,7 +71,7 @@ export function SettingsScreen() {
 		toggleNotifyMatches,
 		notifyUpdates,
 		toggleNotifyUpdates,
-	} = useAppState();
+	} = useProfile();
 
 	const close = () => router.push(fromCall ? ROUTES.call : ROUTES.landing);
 

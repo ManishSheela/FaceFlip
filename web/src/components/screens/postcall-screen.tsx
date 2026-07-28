@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, UserPlus } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useFriends } from "@/hooks/use-friends";
 import { formatDuration } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -12,7 +12,7 @@ import { CenteredScreen } from "@/components/layout/centered-screen";
 export function PostCallScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addRandomFriend } = useAppState();
+  const { addRandomFriend } = useFriends();
 
   const seconds = Number(searchParams.get("d") ?? 0);
 

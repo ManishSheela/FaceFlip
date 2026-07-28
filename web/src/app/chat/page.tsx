@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Phone, Send, Video } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useCall } from "@/hooks/use-call";
 import { useChatThread } from "@/hooks/use-chat-thread";
 import type { CallType } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -14,16 +14,14 @@ import { MessageBubble } from "@/components/screens/chat/message-bubble";
 
 export function ChatScreen() {
 	const router = useRouter();
-	const { activeFriend, startFriendCall } = useAppState();
+	const { activeFriend, startFriendCall } = useCall();
 	const { messages, input, setInput, send } = useChatThread(activeFriend);
 	const endRef = useRef<HTMLDivElement>(null);
 
-	// Guard: a chat needs a selected friend.
 	useEffect(() => {
 		if (!activeFriend) router.replace(ROUTES.friends);
 	}, [activeFriend, router]);
 
-	// Keep the newest message in view.
 	useEffect(() => {
 		endRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages]);

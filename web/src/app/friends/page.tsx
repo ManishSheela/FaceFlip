@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useCall } from "@/hooks/use-call";
+import { useFriends } from "@/hooks/use-friends";
 import type { CallType, Friend } from "@/types";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -12,14 +13,8 @@ import { FriendRow } from "@/components/screens/friends/friend-row";
 
 export function FriendsScreen() {
 	const router = useRouter();
-	const {
-		friends,
-		requests,
-		acceptRequest,
-		declineRequest,
-		startFriendCall,
-		setActiveFriend,
-	} = useAppState();
+	const { friends, requests, acceptRequest, declineRequest } = useFriends();
+	const { startFriendCall, setActiveFriend } = useCall();
 
 	const callFriend = (friend: Friend, type: CallType) => {
 		startFriendCall(friend, type);

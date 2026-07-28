@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ROUTES, USER_GENDER_OPTIONS } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -14,7 +14,7 @@ import type { UserGender } from "@/types";
 export function OnboardingScreen() {
 	const router = useRouter();
 	const { loggedIn, userGender, setUserGender, ageConfirmed, setAgeConfirmed } =
-		useAppState();
+		useAuth();
 
 	const canContinue = userGender !== null && ageConfirmed;
 
