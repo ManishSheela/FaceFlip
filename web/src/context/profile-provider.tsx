@@ -13,6 +13,7 @@ export interface ProfileContextValue {
 	profileName: string;
 	setProfileName: (name: string) => void;
 	profileEmail: string;
+	setProfileEmail: (email: string) => void;
 	camDevice: string;
 	setCamDevice: (value: string) => void;
 	micDevice: string;
@@ -27,7 +28,9 @@ export const ProfileContext = createContext<ProfileContextValue | null>(null);
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
 	const [profileName, setProfileName] = useState<string>(DEFAULT_PROFILE.name);
-	const profileEmail = DEFAULT_PROFILE.email;
+	const [profileEmail, setProfileEmail] = useState<string>(
+		DEFAULT_PROFILE.email,
+	);
 
 	const [camDevice, setCamDevice] = useState("Built-in camera");
 	const [micDevice, setMicDevice] = useState("Built-in microphone");
@@ -49,6 +52,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 			profileName,
 			setProfileName,
 			profileEmail,
+			setProfileEmail,
 			camDevice,
 			setCamDevice,
 			micDevice,

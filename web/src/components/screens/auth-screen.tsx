@@ -1,28 +1,72 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
 import { ROUTES } from "@/constants";
 import { useAuth } from "@/hooks/use-auth";
+import { useGoogleLogin } from "@/hooks/use-google-login";
 import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useProfile } from "@/hooks/use-profile";
+import { loadOnboarding } from "@/lib/onboarding-storage";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import { GoogleIcon } from "@/components/icons/google-icon";
+import type { GoogleProfile } from "@/types";
 
 export function AuthScreen() {
 	const router = useRouter();
-	const { setLoggedIn } = useAuth();
+	const {
+		setLoggedIn,
+		setGoogleProfile,
+		setUserGender,
+		setAgeConfirmed,
+		resetOnboardingStatus,
+	} = useAuth();
 	const { setGenderPref } = useMatchPreference();
+	const { setProfileName, setProfileEmail } = useProfile();
 
-	const continueWithGoogle = () => {
-		setLoggedIn(true);
-		router.push(ROUTES.onboarding);
-	};
+	const handleSuccess = useCallback(
+		(profile: GoogleProfile) => {
+			setGoogleProfile(profile);
+			setProfileName(profile.name);
+			setProfileEmail(profile.email);
+			setLoggedIn(true);
+
+			// Returning Google account with a saved answer: skip the prompt.
+			const saved = loadOnboarding(profile.id);
+			if (saved) {
+				setUserGender(saved.userGender);
+				setAgeConfirmed(saved.ageConfirmed);
+				router.push(ROUTES.gender);
+			} else {
+				resetOnboardingStatus();
+				router.push(ROUTES.onboarding);
+			}
+		},
+		[
+			setGoogleProfile,
+			setProfileName,
+			setProfileEmail,
+			setLoggedIn,
+			setUserGender,
+			setAgeConfirmed,
+			resetOnboardingStatus,
+			router,
+		],
+	);
+
+	const { signIn, loading, error } = useGoogleLogin({
+		onSuccess: handleSuccess,
+	});
 
 	const continueAsGuest = () => {
 		setLoggedIn(false);
+		setGoogleProfile(null);
 		setGenderPref("random");
+		// Guest sessions aren't persistent — always start from a clean prompt.
+		resetOnboardingStatus();
 		router.push(ROUTES.onboarding);
 	};
 
@@ -41,12 +85,15 @@ export function AuthScreen() {
 						variant="primary"
 						blueprint
 						block
+						disabled={loading}
 						className="h-[52px] justify-start gap-3 px-3.5"
-						onClick={continueWithGoogle}
+						onClick={signIn}
 					>
 						<GoogleIcon />
-						Continue with Google
+						{loading ? "Signing in…" : "Continue with Google"}
 					</Button>
+
+					{error && <p className="m-0 text-xs text-[#c0392b]">{error}</p>}
 
 					<div className="flex items-center gap-2.5">
 						<div className="h-px flex-1 bg-divider" />

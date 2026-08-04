@@ -12,6 +12,8 @@ export * from "./routes";
 
 export const APP_NAME = "FaceFliip";
 
+export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
+
 export const MATCHING_DURATION_SEC = 3;
 
 export const ONLINE_COUNT = "12,847";

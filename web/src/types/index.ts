@@ -37,3 +37,11 @@ export interface DeviceOption {
 	label: string;
 	value: string;
 }
+
+/** A Google account identity, verified server-side after sign-in. */
+export interface GoogleProfile {
+	id: string;
+	name: string;
+	email: string;
+	picture?: string;
+}

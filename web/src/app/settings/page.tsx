@@ -14,6 +14,7 @@ import {
 	GENDER_PREF_LABELS,
 	MICROPHONE_DEVICES,
 	ROUTES,
+	USER_GENDER_OPTIONS,
 } from "@/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useMatchPreference } from "@/hooks/use-match-preference";
@@ -56,7 +57,7 @@ export function SettingsScreen() {
 	const searchParams = useSearchParams();
 	const fromCall = searchParams.get("from") === "call";
 
-	const { loggedIn, setLoggedIn } = useAuth();
+	const { loggedIn, setLoggedIn, userGender, setUserGender } = useAuth();
 	const { genderPref, setGenderPref } = useMatchPreference();
 	const { theme, setTheme } = useTheme();
 	const {
@@ -150,6 +151,22 @@ export function SettingsScreen() {
 
 			{/* Preference + Appearance */}
 			<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+				{loggedIn && (
+					<SectionCard kicker="Your gender" icon={<User {...ICON} />}>
+						<div className="flex flex-col gap-2.5">
+							<p className="text-muted m-0 text-[13px]">
+								Shown on your profile. Set during sign-in.
+							</p>
+							<SegmentedControl
+								aria-label="Your gender"
+								options={USER_GENDER_OPTIONS}
+								value={userGender ?? USER_GENDER_OPTIONS[0].value}
+								onValueChange={setUserGender}
+							/>
+						</div>
+					</SectionCard>
+				)}
+
 				{loggedIn && (
 					<SectionCard kicker="Match preference" icon={<UserPlus {...ICON} />}>
 						<div className="flex flex-col gap-2.5">
