@@ -8,7 +8,8 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { saveOnboarding } from "@/lib/onboarding-storage";
+import { fetchSession } from "@/lib/auth-api";
+import { loadOnboarding, saveOnboarding } from "@/lib/onboarding-storage";
 import type { GoogleProfile, UserGender } from "@/types";
 
 export interface AuthContextValue {
@@ -20,7 +21,7 @@ export interface AuthContextValue {
 	setAgeConfirmed: (value: boolean) => void;
 	googleProfile: GoogleProfile | null;
 	setGoogleProfile: (value: GoogleProfile | null) => void;
-	/** Clears the gender/age answers, e.g. before a fresh onboarding prompt. */
+	authReady: boolean;
 	resetOnboardingStatus: () => void;
 }
 
@@ -33,19 +34,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const [googleProfile, setGoogleProfile] = useState<GoogleProfile | null>(
 		null,
 	);
+	const [authReady, setAuthReady] = useState(false);
 
 	const resetOnboardingStatus = useCallback(() => {
 		setUserGender(null);
 		setAgeConfirmed(false);
 	}, []);
 
-	/* Google accounts: keep the saved gender/age answer in sync with the
-	   account, so a later sign-in on this device can skip the prompt. */
 	useEffect(() => {
 		if (loggedIn && googleProfile && userGender !== null && ageConfirmed) {
 			saveOnboarding(googleProfile.id, { userGender, ageConfirmed });
 		}
 	}, [loggedIn, googleProfile, userGender, ageConfirmed]);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		fetchSession().then((profile) => {
+			if (cancelled) return;
+
+			if (profile) {
+				setGoogleProfile(profile);
+				setLoggedIn(true);
+
+				const saved = loadOnboarding(profile.id);
+				if (saved) {
+					setUserGender(saved.userGender);
+					setAgeConfirmed(saved.ageConfirmed);
+				}
+			}
+			setAuthReady(true);
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, []);
 
 	const value = useMemo<AuthContextValue>(
 		() => ({
@@ -57,9 +81,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			setAgeConfirmed,
 			googleProfile,
 			setGoogleProfile,
+			authReady,
 			resetOnboardingStatus,
 		}),
-		[loggedIn, userGender, ageConfirmed, googleProfile, resetOnboardingStatus],
+		[
+			loggedIn,
+			userGender,
+			ageConfirmed,
+			googleProfile,
+			authReady,
+			resetOnboardingStatus,
+		],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

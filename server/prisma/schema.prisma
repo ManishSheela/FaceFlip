@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String     @id @default(cuid())
+  googleId     String     @unique
+  email        String     @unique
+  name         String
+  picture      String?
+  gender       Gender?
+  ageConfirmed Boolean    @default(false)
+  genderPref   GenderPref @default(RANDOM)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  friendshipsSent     Friendship[] @relation("Requester")
+  friendshipsReceived Friendship[] @relation("Addressee")
+  reportsFiled        Report[]     @relation("Reporter")
+  reportsReceived     Report[]     @relation("Reported")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum GenderPref {
+  MALE
+  FEMALE
+  RANDOM
+}
+
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String
+  addresseeId String
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  respondedAt DateTime?
+
+  requester User @relation("Requester", fields: [requesterId], references: [id])
+  addressee User @relation("Addressee", fields: [addresseeId], references: [id])
+
+  @@unique([requesterId, addresseeId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  reportedId String
+  reason     ReportReason
+  note       String?
+  createdAt  DateTime     @default(now())
+
+  reporter User @relation("Reporter", fields: [reporterId], references: [id])
+  reported User @relation("Reported", fields: [reportedId], references: [id])
+}
+
+enum ReportReason {
+  SPAM
+  INAPPROPRIATE
+  UNDERAGE
+  OTHER
+}

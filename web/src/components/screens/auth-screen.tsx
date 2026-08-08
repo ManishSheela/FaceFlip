@@ -1,71 +1,36 @@
 "use client";
 
-import { useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
-import { ROUTES } from "@/constants";
+import { API_URL, ROUTES } from "@/constants";
 import { useAuth } from "@/hooks/use-auth";
-import { useGoogleLogin } from "@/hooks/use-google-login";
 import { useMatchPreference } from "@/hooks/use-match-preference";
-import { useProfile } from "@/hooks/use-profile";
-import { loadOnboarding } from "@/lib/onboarding-storage";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import { GoogleIcon } from "@/components/icons/google-icon";
-import type { GoogleProfile } from "@/types";
+
+const ERROR_MESSAGES: Record<string, string> = {
+	cancelled: "Google sign-in was cancelled.",
+	failed: "Couldn't complete Google sign-in. Please try again.",
+};
 
 export function AuthScreen() {
 	const router = useRouter();
-	const {
-		setLoggedIn,
-		setGoogleProfile,
-		setUserGender,
-		setAgeConfirmed,
-		resetOnboardingStatus,
-	} = useAuth();
+	const { setLoggedIn, setGoogleProfile, resetOnboardingStatus } = useAuth();
 	const { setGenderPref } = useMatchPreference();
-	const { setProfileName, setProfileEmail } = useProfile();
+	const [error, setError] = useState<string | null>(null);
 
-	const handleSuccess = useCallback(
-		(profile: GoogleProfile) => {
-			setGoogleProfile(profile);
-			setProfileName(profile.name);
-			setProfileEmail(profile.email);
-			setLoggedIn(true);
-
-			// Returning Google account with a saved answer: skip the prompt.
-			const saved = loadOnboarding(profile.id);
-			if (saved) {
-				setUserGender(saved.userGender);
-				setAgeConfirmed(saved.ageConfirmed);
-				router.push(ROUTES.gender);
-			} else {
-				resetOnboardingStatus();
-				router.push(ROUTES.onboarding);
-			}
-		},
-		[
-			setGoogleProfile,
-			setProfileName,
-			setProfileEmail,
-			setLoggedIn,
-			setUserGender,
-			setAgeConfirmed,
-			resetOnboardingStatus,
-			router,
-		],
-	);
-
-	const { signIn, loading, error } = useGoogleLogin({
-		onSuccess: handleSuccess,
-	});
+	useEffect(() => {
+		const code = new URLSearchParams(window.location.search).get("error");
+		if (code) setError(ERROR_MESSAGES[code] ?? ERROR_MESSAGES.failed);
+	}, []);
 
 	const continueAsGuest = () => {
 		setLoggedIn(false);
 		setGoogleProfile(null);
 		setGenderPref("random");
-		// Guest sessions aren't persistent — always start from a clean prompt.
 		resetOnboardingStatus();
 		router.push(ROUTES.onboarding);
 	};
@@ -85,12 +50,13 @@ export function AuthScreen() {
 						variant="primary"
 						blueprint
 						block
-						disabled={loading}
 						className="h-[52px] justify-start gap-3 px-3.5"
-						onClick={signIn}
+						onClick={() => {
+							window.location.href = `${API_URL}/auth/google`;
+						}}
 					>
 						<GoogleIcon />
-						{loading ? "Signing in…" : "Continue with Google"}
+						Continue with Google
 					</Button>
 
 					{error && <p className="m-0 text-xs text-[#c0392b]">{error}</p>}
