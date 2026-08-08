@@ -41,7 +41,14 @@ authRouter.get("/me", async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return res.status(401).json({ error: "Not signed in." });
 
-  res.json({ user: toPublicUser(user) });
+  const friendCount = await prisma.friendship.count({
+    where: {
+      status: "ACCEPTED",
+      OR: [{ requesterId: userId }, { addresseeId: userId }],
+    },
+  });
+
+  res.json({ user: { ...toPublicUser(user), friendCount } });
 });
 
 authRouter.post("/logout", (_req, res) => {

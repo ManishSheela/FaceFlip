@@ -3,37 +3,25 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
-import { useProfile } from "@/hooks/use-profile";
+import { useSession } from "@/hooks/use-session";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 
 export default function AuthCallbackPage() {
 	const router = useRouter();
-	const { authReady, googleProfile, userGender, ageConfirmed } = useAuth();
-	const { setProfileName, setProfileEmail } = useProfile();
+	const { status, user, userGender, ageConfirmed } = useSession();
 
 	useEffect(() => {
-		if (!authReady) return;
+		if (status === "loading") return;
 
-		if (!googleProfile) {
+		if (!user) {
 			router.replace(`${ROUTES.auth}?error=failed`);
 			return;
 		}
 
-		setProfileName(googleProfile.name);
-		setProfileEmail(googleProfile.email);
 		router.replace(
 			userGender && ageConfirmed ? ROUTES.gender : ROUTES.onboarding,
 		);
-	}, [
-		authReady,
-		googleProfile,
-		userGender,
-		ageConfirmed,
-		setProfileName,
-		setProfileEmail,
-		router,
-	]);
+	}, [status, user, userGender, ageConfirmed, router]);
 
 	return (
 		<CenteredScreen>

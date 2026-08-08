@@ -10,15 +10,14 @@ import {
 	Video,
 } from "lucide-react";
 import {
+	API_URL,
 	CAMERA_DEVICES,
 	GENDER_PREF_LABELS,
 	MICROPHONE_DEVICES,
 	ROUTES,
 	USER_GENDER_OPTIONS,
 } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
-import { useMatchPreference } from "@/hooks/use-match-preference";
-import { useProfile } from "@/hooks/use-profile";
+import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
 import type { GenderPref, Theme } from "@/types";
@@ -57,22 +56,27 @@ export function SettingsScreen() {
 	const searchParams = useSearchParams();
 	const fromCall = searchParams.get("from") === "call";
 
-	const { loggedIn, setLoggedIn, userGender, setUserGender } = useAuth();
-	const { genderPref, setGenderPref } = useMatchPreference();
 	const { theme, setTheme } = useTheme();
 	const {
+		isAuthenticated,
+		userGender,
+		genderPref,
 		profileName,
-		setProfileName,
 		profileEmail,
 		camDevice,
-		setCamDevice,
 		micDevice,
-		setMicDevice,
 		notifyMatches,
-		toggleNotifyMatches,
 		notifyUpdates,
+	} = useSession();
+	const {
+		setUserGender,
+		setGenderPref,
+		setProfileName,
+		setCamDevice,
+		setMicDevice,
+		toggleNotifyMatches,
 		toggleNotifyUpdates,
-	} = useProfile();
+	} = useSessionActions();
 
 	const close = () => router.push(fromCall ? ROUTES.call : ROUTES.landing);
 
@@ -92,7 +96,7 @@ export function SettingsScreen() {
 				</Button>
 			</div>
 
-			{loggedIn ? (
+			{isAuthenticated ? (
 				<SectionCard
 					kicker="Profile"
 					icon={<User {...ICON} />}
@@ -140,7 +144,9 @@ export function SettingsScreen() {
 							variant="primary"
 							blueprint
 							className="gap-1.5"
-							onClick={() => setLoggedIn(true)}
+							onClick={() => {
+								window.location.href = `${API_URL}/auth/google`;
+							}}
 						>
 							<GoogleIcon size={15} />
 							Sign in with Google
@@ -151,7 +157,7 @@ export function SettingsScreen() {
 
 			{/* Preference + Appearance */}
 			<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
-				{loggedIn && (
+				{isAuthenticated && (
 					<SectionCard kicker="Your gender" icon={<User {...ICON} />}>
 						<div className="flex flex-col gap-2.5">
 							<p className="text-muted m-0 text-[13px]">
@@ -167,7 +173,7 @@ export function SettingsScreen() {
 					</SectionCard>
 				)}
 
-				{loggedIn && (
+				{isAuthenticated && (
 					<SectionCard kicker="Match preference" icon={<UserPlus {...ICON} />}>
 						<div className="flex flex-col gap-2.5">
 							<p className="text-muted m-0 text-[13px]">

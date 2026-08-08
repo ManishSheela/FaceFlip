@@ -71,8 +71,8 @@ export function toPublicUser(user) {
     name: user.name,
     email: user.email,
     picture: user.picture,
-    gender: user.gender,
+    gender: user.gender?.toLowerCase() ?? null,
     ageConfirmed: user.ageConfirmed,
-    genderPref: user.genderPref,
+    genderPref: user.genderPref.toLowerCase(),
   };
 }

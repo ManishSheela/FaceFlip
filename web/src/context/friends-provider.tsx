@@ -7,17 +7,13 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import {
-	INITIAL_FRIENDS,
-	INITIAL_REQUESTS,
-	RANDOM_FRIEND_NAMES,
-} from "@/constants";
-import type { Friend } from "@/types";
+import { RANDOM_FRIEND_NAMES } from "@/constants";
+import type { Friend, FriendRequest } from "@/types";
 import { getInitials } from "@/lib/utils";
 
 export interface FriendsContextValue {
 	friends: Friend[];
-	requests: typeof INITIAL_REQUESTS;
+	requests: FriendRequest[];
 	acceptRequest: (id: number) => void;
 	declineRequest: (id: number) => void;
 	addRandomFriend: () => void;
@@ -26,8 +22,8 @@ export interface FriendsContextValue {
 export const FriendsContext = createContext<FriendsContextValue | null>(null);
 
 export function FriendsProvider({ children }: { children: ReactNode }) {
-	const [friends, setFriends] = useState<Friend[]>(INITIAL_FRIENDS);
-	const [requests, setRequests] = useState(INITIAL_REQUESTS);
+	const [friends, setFriends] = useState<Friend[]>([]);
+	const [requests, setRequests] = useState<FriendRequest[]>([]);
 
 	const acceptRequest = useCallback((id: number) => {
 		setRequests((prev) => {

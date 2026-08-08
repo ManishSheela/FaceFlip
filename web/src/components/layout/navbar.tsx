@@ -3,10 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { APP_NAME, ROUTES } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
 import { useFriends } from "@/hooks/use-friends";
-import { useMatchPreference } from "@/hooks/use-match-preference";
-import { useProfile } from "@/hooks/use-profile";
+import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,9 +24,8 @@ export function Navbar() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { theme, toggleTheme } = useTheme();
-	const { loggedIn } = useAuth();
-	const { genderPref, setGenderPref } = useMatchPreference();
-	const { profileName } = useProfile();
+	const { isAuthenticated, genderPref, profileName } = useSession();
+	const { setGenderPref } = useSessionActions();
 	const { requests } = useFriends();
 
 	if (CHROMELESS_ROUTES.includes(pathname)) return null;
@@ -59,7 +56,7 @@ export function Navbar() {
 				)}
 			</Button>
 
-			{loggedIn && (
+			{isAuthenticated && (
 				<SegmentedControl
 					aria-label="Match preference"
 					options={GENDER_OPTIONS}
@@ -69,7 +66,7 @@ export function Navbar() {
 				/>
 			)}
 
-			{loggedIn && (
+			{isAuthenticated && (
 				<button
 					type="button"
 					onClick={() => router.push(ROUTES.settings)}

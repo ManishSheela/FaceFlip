@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
-import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -17,7 +17,8 @@ const OPTIONS: { label: string; value: GenderPref }[] = [
 
 export function GenderScreen() {
   const router = useRouter();
-  const { genderPref, setGenderPref } = useMatchPreference();
+  const { genderPref } = useSession();
+  const { setGenderPref } = useSessionActions();
 
   return (
     <CenteredScreen maxWidth={420}>

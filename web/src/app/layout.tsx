@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/context/app-providers";
 import { AppShell } from "@/components/layout/app-shell";
+import { ApiService } from "@/lib/api-service";
 import { APP_NAME } from "@/constants";
 
 export const metadata: Metadata = {
@@ -19,18 +20,20 @@ const themeScript = `
 })();
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const initialSession = await ApiService.getServerSession();
+
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <AppProviders>
+        <AppProviders initialSession={initialSession}>
           <AppShell>{children}</AppShell>
         </AppProviders>
       </body>

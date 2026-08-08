@@ -38,10 +38,18 @@ export interface DeviceOption {
 	value: string;
 }
 
-/** A Google account identity, verified server-side after sign-in. */
 export interface GoogleProfile {
 	id: string;
 	name: string;
 	email: string;
 	picture: string | null;
+	gender: UserGender | null;
+	ageConfirmed: boolean;
+	genderPref: GenderPref;
+	friendCount: number;
+}
+
+export interface ServerSession {
+	user: GoogleProfile | null;
+	resolved: boolean;
 }

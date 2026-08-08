@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
 import { API_URL, ROUTES } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
-import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
@@ -18,8 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 export function AuthScreen() {
 	const router = useRouter();
-	const { setLoggedIn, setGoogleProfile, resetOnboardingStatus } = useAuth();
-	const { setGenderPref } = useMatchPreference();
+	const { signOut } = useSessionActions();
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -27,11 +25,8 @@ export function AuthScreen() {
 		if (code) setError(ERROR_MESSAGES[code] ?? ERROR_MESSAGES.failed);
 	}, []);
 
-	const continueAsGuest = () => {
-		setLoggedIn(false);
-		setGoogleProfile(null);
-		setGenderPref("random");
-		resetOnboardingStatus();
+	const continueAsGuest = async () => {
+		await signOut();
 		router.push(ROUTES.onboarding);
 	};
 

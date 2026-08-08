@@ -9,9 +9,8 @@ import {
 	ONLINE_COUNT,
 	ROUTES,
 } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
 import { useCall } from "@/hooks/use-call";
-import { useMatchPreference } from "@/hooks/use-match-preference";
+import { useSession } from "@/hooks/use-session";
 import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
 import { useTimeout } from "@/hooks/use-timeout";
 import { formatDuration } from "@/lib/utils";
@@ -29,8 +28,7 @@ const TARGET_CORNERS = [
 
 export function MatchingScreen() {
 	const router = useRouter();
-	const { loggedIn } = useAuth();
-	const { genderPref } = useMatchPreference();
+	const { isAuthenticated, genderPref } = useSession();
 	const { startStrangerCall } = useCall();
 	const elapsed = useElapsedTimer(true);
 
@@ -40,7 +38,7 @@ export function MatchingScreen() {
 
 	useTimeout(() => router.push(ROUTES.call), MATCHING_DURATION_SEC * 1000);
 
-	const cancel = () => router.push(loggedIn ? ROUTES.gender : ROUTES.auth);
+	const cancel = () => router.push(isAuthenticated ? ROUTES.gender : ROUTES.auth);
 
 	return (
 		<section className="relative flex flex-1 animate-fade-slide-in flex-col items-center justify-center overflow-hidden p-5">

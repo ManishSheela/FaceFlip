@@ -1,8 +1,6 @@
 import type {
 	DeviceOption,
 	FeatureCard,
-	Friend,
-	FriendRequest,
 	GenderPref,
 	ReportReason,
 	UserGender,
@@ -15,6 +13,10 @@ export const APP_NAME = "FaceFliip";
 export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+
+export const SESSION_COOKIE = "faceflip_session";
+
+export const REQUEST_TIMEOUT_MS = 15000;
 
 export const MATCHING_DURATION_SEC = 3;
 
@@ -50,17 +52,6 @@ export const USER_GENDER_OPTIONS: { label: string; value: UserGender }[] = [
 	{ label: "Other", value: "other" },
 ];
 
-export const INITIAL_FRIENDS: Friend[] = [
-	{ id: 1, name: "Priya Sharma", initials: "PS", online: true },
-	{ id: 2, name: "Marco Chen", initials: "MC", online: false },
-	{ id: 3, name: "Sarah Kim", initials: "SK", online: true },
-];
-
-export const INITIAL_REQUESTS: FriendRequest[] = [
-	{ id: 4, name: "Alex Rivera", initials: "AR" },
-	{ id: 5, name: "Jordan Lee", initials: "JL" },
-];
-
 export const REPORT_REASONS: { value: ReportReason; label: string }[] = [
 	{ value: "spam", label: "Spam or advertising" },
 	{ value: "inappropriate", label: "Inappropriate content" },
@@ -92,8 +83,3 @@ export const MICROPHONE_DEVICES: DeviceOption[] = [
 	{ label: "Built-in microphone", value: "Built-in microphone" },
 	{ label: "Headset mic", value: "Headset mic" },
 ];
-
-export const DEFAULT_PROFILE = {
-	name: "Manish Sheela",
-	email: "manish.faceflip@gmail.com",
-} as const;
