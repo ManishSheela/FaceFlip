@@ -2,14 +2,12 @@
 
 import {
 	createContext,
-	useCallback,
 	useEffect,
 	useMemo,
 	useRef,
 	useState,
 	type ReactNode,
 } from "react";
-import { CAMERA_DEVICES, MICROPHONE_DEVICES } from "@/constants";
 import { ApiService } from "@/lib/api-service";
 import { loadOnboarding, saveOnboarding } from "@/lib/utils";
 import type {
@@ -21,26 +19,18 @@ import type {
 
 type SessionStatus = "loading" | "authenticated" | "guest";
 
-interface Preferences {
+interface Profile {
 	displayName: string | null;
 	genderPref: GenderPref | null;
 	userGender: UserGender | null;
 	ageConfirmed: boolean | null;
-	camDevice: string;
-	micDevice: string;
-	notifyMatches: boolean;
-	notifyUpdates: boolean;
 }
 
-const INITIAL_PREFERENCES: Preferences = {
+const INITIAL_PROFILE: Profile = {
 	displayName: null,
 	genderPref: null,
 	userGender: null,
 	ageConfirmed: null,
-	camDevice: CAMERA_DEVICES[0].value,
-	micDevice: MICROPHONE_DEVICES[0].value,
-	notifyMatches: true,
-	notifyUpdates: false,
 };
 
 export interface SessionState {
@@ -52,10 +42,6 @@ export interface SessionState {
 	genderPref: GenderPref;
 	userGender: UserGender | null;
 	ageConfirmed: boolean;
-	camDevice: string;
-	micDevice: string;
-	notifyMatches: boolean;
-	notifyUpdates: boolean;
 }
 
 export interface SessionActions {
@@ -63,10 +49,6 @@ export interface SessionActions {
 	setGenderPref: (pref: GenderPref) => void;
 	setUserGender: (gender: UserGender) => void;
 	setAgeConfirmed: (confirmed: boolean) => void;
-	setCamDevice: (device: string) => void;
-	setMicDevice: (device: string) => void;
-	toggleNotifyMatches: () => void;
-	toggleNotifyUpdates: () => void;
 	refresh: () => Promise<void>;
 	signOut: () => Promise<void>;
 }
@@ -86,8 +68,7 @@ export function SessionProvider({
 		if (!initialSession.resolved) return "loading";
 		return initialSession.user ? "authenticated" : "guest";
 	});
-	const [preferences, setPreferences] =
-		useState<Preferences>(INITIAL_PREFERENCES);
+	const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
 
 	const userRef = useRef(user);
 	userRef.current = user;
@@ -98,10 +79,10 @@ export function SessionProvider({
 		if (alreadyResolved) return;
 
 		let cancelled = false;
-		ApiService.fetchSession().then((profile) => {
+		ApiService.fetchSession().then((fetched) => {
 			if (cancelled) return;
-			setUser(profile);
-			setStatus(profile ? "authenticated" : "guest");
+			setUser(fetched);
+			setStatus(fetched ? "authenticated" : "guest");
 		});
 
 		return () => {
@@ -114,11 +95,11 @@ export function SessionProvider({
 	useEffect(() => {
 		if (!userId) return;
 		const saved = loadOnboarding(userId);
-		if (saved) setPreferences((prev) => ({ ...prev, ...saved }));
+		if (saved) setProfile((prev) => ({ ...prev, ...saved }));
 	}, [userId]);
 
-	const userGender = preferences.userGender ?? user?.gender ?? null;
-	const ageConfirmed = preferences.ageConfirmed ?? user?.ageConfirmed ?? false;
+	const userGender = profile.userGender ?? user?.gender ?? null;
+	const ageConfirmed = profile.ageConfirmed ?? user?.ageConfirmed ?? false;
 
 	useEffect(() => {
 		if (!userId || userGender === null || !ageConfirmed) return;
@@ -130,50 +111,34 @@ export function SessionProvider({
 			user,
 			status,
 			isAuthenticated: user !== null,
-			profileName: preferences.displayName ?? user?.name ?? "",
+			profileName: profile.displayName ?? user?.name ?? "",
 			profileEmail: user?.email ?? "",
-			genderPref: preferences.genderPref ?? user?.genderPref ?? "random",
+			genderPref: profile.genderPref ?? user?.genderPref ?? "random",
 			userGender,
 			ageConfirmed,
-			camDevice: preferences.camDevice,
-			micDevice: preferences.micDevice,
-			notifyMatches: preferences.notifyMatches,
-			notifyUpdates: preferences.notifyUpdates,
 		}),
-		[user, status, preferences, userGender, ageConfirmed],
+		[user, status, profile, userGender, ageConfirmed],
 	);
 
 	const actions = useMemo<SessionActions>(() => {
-		const update = (patch: Partial<Preferences>) =>
-			setPreferences((prev) => ({ ...prev, ...patch }));
+		const update = (patch: Partial<Profile>) =>
+			setProfile((prev) => ({ ...prev, ...patch }));
 
 		return {
 			setProfileName: (displayName) => update({ displayName }),
 			setGenderPref: (genderPref) => update({ genderPref }),
 			setUserGender: (userGender) => update({ userGender }),
 			setAgeConfirmed: (ageConfirmed) => update({ ageConfirmed }),
-			setCamDevice: (camDevice) => update({ camDevice }),
-			setMicDevice: (micDevice) => update({ micDevice }),
-			toggleNotifyMatches: () =>
-				setPreferences((prev) => ({
-					...prev,
-					notifyMatches: !prev.notifyMatches,
-				})),
-			toggleNotifyUpdates: () =>
-				setPreferences((prev) => ({
-					...prev,
-					notifyUpdates: !prev.notifyUpdates,
-				})),
 			refresh: async () => {
-				const profile = await ApiService.fetchSession();
-				setUser(profile);
-				setStatus(profile ? "authenticated" : "guest");
+				const fetched = await ApiService.fetchSession();
+				setUser(fetched);
+				setStatus(fetched ? "authenticated" : "guest");
 			},
 			signOut: async () => {
 				if (userRef.current) await ApiService.logout();
 				setUser(null);
 				setStatus("guest");
-				setPreferences(INITIAL_PREFERENCES);
+				setProfile(INITIAL_PROFILE);
 			},
 		};
 	}, []);

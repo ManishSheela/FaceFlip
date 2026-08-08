@@ -45,7 +45,6 @@ export function CallControlBar({
 }: CallControlBarProps) {
   return (
     <div className="absolute bottom-0 left-0 right-0 z-10 flex flex-wrap justify-center gap-2.5 bg-gradient-to-t from-black/60 to-transparent p-3.5">
-      {/* Mic */}
       <Button
         variant={micOn ? "glass" : "primary"}
         size="icon"
@@ -55,7 +54,6 @@ export function CallControlBar({
         {micOn ? <Mic {...ICON_PROPS} /> : <MicOff {...ICON_PROPS} />}
       </Button>
 
-      {/* Camera (video calls only) */}
       {isVideo && (
         <Button
           variant={camOn ? "glass" : "primary"}
@@ -67,7 +65,6 @@ export function CallControlBar({
         </Button>
       )}
 
-      {/* Next stranger (random calls only) */}
       {!isFriendCall && (
         <Button variant="primary" blueprint className="gap-1.5" onClick={onNext}>
           <SkipForward className="h-4 w-4" strokeWidth={1.5} />
@@ -75,7 +72,6 @@ export function CallControlBar({
         </Button>
       )}
 
-      {/* Add friend (random calls only) */}
       {!isFriendCall && (
         <Button
           variant="glass"
@@ -87,17 +83,14 @@ export function CallControlBar({
         </Button>
       )}
 
-      {/* End call */}
       <Button variant="danger" size="icon" onClick={onEnd} title="End call">
         <PhoneOff {...ICON_PROPS} />
       </Button>
 
-      {/* Report */}
       <Button variant="glass" size="icon" onClick={onReport} title="Report">
         <Flag className="h-4 w-4" strokeWidth={1.5} />
       </Button>
 
-      {/* Settings */}
       <Button variant="glass" size="icon" onClick={onSettings} title="Settings">
         <Settings className="h-4 w-4" strokeWidth={1.5} />
       </Button>

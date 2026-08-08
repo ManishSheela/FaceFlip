@@ -10,15 +10,16 @@ export * from "./routes";
 
 export const APP_NAME = "FaceFliip";
 
-export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
-
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+export const API_URL =
+	process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 export const SESSION_COOKIE = "faceflip_session";
 
 export const REQUEST_TIMEOUT_MS = 15000;
 
 export const MATCHING_DURATION_SEC = 3;
+
+export const CONNECT_DELAY_MS = 1000;
 
 export const ONLINE_COUNT = "12,847";
 
@@ -45,6 +46,10 @@ export const GENDER_PREF_LABELS: Record<GenderPref, string> = {
 	female: "Female",
 	random: "Anyone",
 };
+
+export const GENDER_PREF_OPTIONS: { label: string; value: GenderPref }[] = (
+	["male", "female", "random"] as const
+).map((value) => ({ label: GENDER_PREF_LABELS[value], value }));
 
 export const USER_GENDER_OPTIONS: { label: string; value: UserGender }[] = [
 	{ label: "Male", value: "male" },

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
-import { APP_NAME, ROUTES } from "@/constants";
+import { APP_NAME, GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
 import { useFriends } from "@/hooks/use-friends";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
@@ -10,14 +10,6 @@ import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
 import { Tag } from "@/components/blueprint/tag";
-import type { GenderPref } from "@/types";
-
-const GENDER_OPTIONS: { label: string; value: GenderPref }[] = [
-	{ label: "Male", value: "male" },
-	{ label: "Female", value: "female" },
-	{ label: "Random", value: "random" },
-];
-
 const CHROMELESS_ROUTES: string[] = [ROUTES.call];
 
 export function Navbar() {
@@ -59,7 +51,7 @@ export function Navbar() {
 			{isAuthenticated && (
 				<SegmentedControl
 					aria-label="Match preference"
-					options={GENDER_OPTIONS}
+					options={GENDER_PREF_OPTIONS}
 					value={genderPref}
 					onValueChange={setGenderPref}
 					className="hidden sm:inline-flex"

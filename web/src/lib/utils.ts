@@ -32,7 +32,7 @@ export function saveOnboarding(googleId: string, data: StoredOnboarding): void {
 			JSON.stringify(data),
 		);
 	} catch {
-		/* localStorage unavailable (private mode, quota) — will just re-prompt next time. */
+		return;
 	}
 }
 

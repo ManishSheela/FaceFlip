@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
 	Bell,
@@ -10,17 +11,17 @@ import {
 	Video,
 } from "lucide-react";
 import {
-	API_URL,
 	CAMERA_DEVICES,
-	GENDER_PREF_LABELS,
+	GENDER_PREF_OPTIONS,
 	MICROPHONE_DEVICES,
 	ROUTES,
 	USER_GENDER_OPTIONS,
 } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
+import { startGoogleLogin } from "@/lib/api-service";
 import { getInitials } from "@/lib/utils";
-import type { GenderPref, Theme } from "@/types";
+import type { Theme } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,49 +41,38 @@ import { GoogleIcon } from "@/components/icons/google-icon";
 
 const ICON = { className: "h-[13px] w-[13px]", strokeWidth: 1.5 } as const;
 
-const GENDER_OPTIONS: { label: string; value: GenderPref }[] = [
-	{ label: "Male", value: "male" },
-	{ label: "Female", value: "female" },
-	{ label: GENDER_PREF_LABELS.random, value: "random" },
-];
-
 const THEME_OPTIONS: { label: string; value: Theme }[] = [
 	{ label: "Light", value: "light" },
 	{ label: "Dark", value: "dark" },
 ];
 
-export function SettingsScreen() {
+export default function SettingsPage() {
+	return (
+		<Suspense fallback={null}>
+			<Settings />
+		</Suspense>
+	);
+}
+
+function Settings() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const fromCall = searchParams.get("from") === "call";
 
 	const { theme, setTheme } = useTheme();
-	const {
-		isAuthenticated,
-		userGender,
-		genderPref,
-		profileName,
-		profileEmail,
-		camDevice,
-		micDevice,
-		notifyMatches,
-		notifyUpdates,
-	} = useSession();
-	const {
-		setUserGender,
-		setGenderPref,
-		setProfileName,
-		setCamDevice,
-		setMicDevice,
-		toggleNotifyMatches,
-		toggleNotifyUpdates,
-	} = useSessionActions();
+	const { isAuthenticated, userGender, genderPref, profileName, profileEmail } =
+		useSession();
+	const { setUserGender, setGenderPref, setProfileName } = useSessionActions();
+
+	const [camDevice, setCamDevice] = useState(CAMERA_DEVICES[0].value);
+	const [micDevice, setMicDevice] = useState(MICROPHONE_DEVICES[0].value);
+	const [notifyMatches, setNotifyMatches] = useState(true);
+	const [notifyUpdates, setNotifyUpdates] = useState(false);
 
 	const close = () => router.push(fromCall ? ROUTES.call : ROUTES.landing);
 
 	return (
 		<section className="mx-auto flex w-full max-w-[720px] animate-fade-slide-in flex-col gap-[17px] px-3.5 pb-16 pt-5">
-			{/* Header */}
 			<div className="flex items-center justify-between border-b border-divider pb-3.5">
 				<div>
 					<h2 className="m-0 mb-0.5">Settings</h2>
@@ -144,9 +134,7 @@ export function SettingsScreen() {
 							variant="primary"
 							blueprint
 							className="gap-1.5"
-							onClick={() => {
-								window.location.href = `${API_URL}/auth/google`;
-							}}
+							onClick={startGoogleLogin}
 						>
 							<GoogleIcon size={15} />
 							Sign in with Google
@@ -154,8 +142,6 @@ export function SettingsScreen() {
 					</div>
 				</SectionCard>
 			)}
-
-			{/* Preference + Appearance */}
 			<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
 				{isAuthenticated && (
 					<SectionCard kicker="Your gender" icon={<User {...ICON} />}>
@@ -181,7 +167,7 @@ export function SettingsScreen() {
 							</p>
 							<SegmentedControl
 								aria-label="Match preference"
-								options={GENDER_OPTIONS}
+								options={GENDER_PREF_OPTIONS}
 								value={genderPref}
 								onValueChange={setGenderPref}
 							/>
@@ -204,8 +190,6 @@ export function SettingsScreen() {
 					</div>
 				</SectionCard>
 			</div>
-
-			{/* Camera & microphone */}
 			<SectionCard kicker="Camera & microphone" icon={<Video {...ICON} />}>
 				<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
 					<div className="flex flex-col gap-1">
@@ -240,22 +224,20 @@ export function SettingsScreen() {
 					</div>
 				</div>
 			</SectionCard>
-
-			{/* Notifications */}
 			<SectionCard kicker="Notifications" icon={<Bell {...ICON} />}>
 				<div className="flex flex-col gap-3.5">
 					<ToggleRow
 						title="New match found"
 						description="Alert when someone is ready to connect"
 						checked={notifyMatches}
-						onCheckedChange={toggleNotifyMatches}
+						onCheckedChange={setNotifyMatches}
 					/>
 					<div className="h-px bg-divider" />
 					<ToggleRow
 						title="Product updates"
 						description="News about features and improvements"
 						checked={notifyUpdates}
-						onCheckedChange={toggleNotifyUpdates}
+						onCheckedChange={setNotifyUpdates}
 					/>
 				</div>
 			</SectionCard>

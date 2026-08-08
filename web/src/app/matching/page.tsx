@@ -26,11 +26,11 @@ const TARGET_CORNERS = [
 	"bottom-[-5px] right-[-5px] border-b border-r",
 ] as const;
 
-export function MatchingScreen() {
+export default function MatchingPage() {
 	const router = useRouter();
 	const { isAuthenticated, genderPref } = useSession();
 	const { startStrangerCall } = useCall();
-	const elapsed = useElapsedTimer(true);
+	const elapsed = useElapsedTimer();
 
 	useEffect(() => {
 		startStrangerCall();
@@ -50,13 +50,11 @@ export function MatchingScreen() {
 				</Tag>
 
 				<RadarRings size={200}>
-					{/* crosshair ticks */}
 					<span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-accent" />
 					<span className="absolute bottom-0 left-1/2 h-3 w-px -translate-x-1/2 bg-accent" />
 					<span className="absolute left-0 top-1/2 h-px w-3 -translate-y-1/2 bg-accent" />
 					<span className="absolute right-0 top-1/2 h-px w-3 -translate-y-1/2 bg-accent" />
 
-					{/* center target */}
 					<div className="relative flex h-[72px] w-[72px] items-center justify-center border border-accent bg-bg">
 						{TARGET_CORNERS.map((pos) => (
 							<span

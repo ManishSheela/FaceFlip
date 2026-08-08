@@ -10,9 +10,9 @@ import type { CallType } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/blueprint/avatar";
-import { MessageBubble } from "@/components/screens/chat/message-bubble";
+import { MessageBubble } from "./_components/message-bubble";
 
-export function ChatScreen() {
+export default function ChatPage() {
 	const router = useRouter();
 	const { activeFriend, startFriendCall } = useCall();
 	const { messages, input, setInput, send } = useChatThread(activeFriend);
@@ -35,7 +35,6 @@ export function ChatScreen() {
 
 	return (
 		<section className="mx-auto flex w-full max-w-[680px] flex-1 animate-fade-slide-in flex-col">
-			{/* Header */}
 			<div className="flex flex-none items-center gap-2.5 border-b border-divider bg-bg px-3.5 py-2.5">
 				<Button
 					variant="ghost"
@@ -70,8 +69,6 @@ export function ChatScreen() {
 					</Button>
 				</div>
 			</div>
-
-			{/* Messages */}
 			<div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3.5">
 				{messages.map((message) => (
 					<MessageBubble
@@ -83,8 +80,6 @@ export function ChatScreen() {
 				))}
 				<div ref={endRef} />
 			</div>
-
-			{/* Input */}
 			<form
 				className="flex flex-none gap-1.5 border-t border-divider bg-bg px-3.5 py-2.5"
 				onSubmit={(e) => {

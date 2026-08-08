@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/constants";
+import { GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,13 +9,7 @@ import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import type { GenderPref } from "@/types";
 
-const OPTIONS: { label: string; value: GenderPref }[] = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-  { label: "Random", value: "random" },
-];
-
-export function GenderScreen() {
+export default function GenderPage() {
   const router = useRouter();
   const { genderPref } = useSession();
   const { setGenderPref } = useSessionActions();
@@ -35,7 +29,7 @@ export function GenderScreen() {
           onValueChange={(v) => setGenderPref(v as GenderPref)}
           className="gap-1.5"
         >
-          {OPTIONS.map((option) => (
+          {GENDER_PREF_OPTIONS.map((option) => (
             <label
               key={option.value}
               className="flex cursor-pointer items-center gap-2 border border-divider px-3.5 py-2.5 text-sm"

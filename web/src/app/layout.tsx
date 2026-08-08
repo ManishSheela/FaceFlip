@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/context/app-providers";
-import { AppShell } from "@/components/layout/app-shell";
-import { ApiService } from "@/lib/api-service";
+import { Navbar } from "@/components/layout/navbar";
+import { getServerSession } from "@/lib/server-session";
 import { APP_NAME } from "@/constants";
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} — Every flip, a new face`,
-  description:
-    "Spontaneous video calls with real people. No scripts, no profiles — just genuine moments.",
+	title: `${APP_NAME} — Every flip, a new face`,
+	description:
+		"Spontaneous video calls with real people. No scripts, no profiles — just genuine moments.",
 };
 
 const themeScript = `
@@ -21,22 +21,25 @@ const themeScript = `
 `;
 
 export default async function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const initialSession = await ApiService.getServerSession();
+	const initialSession = await getServerSession();
 
-  return (
-    <html lang="en" data-theme="light" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body>
-        <AppProviders initialSession={initialSession}>
-          <AppShell>{children}</AppShell>
-        </AppProviders>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" data-theme="light" suppressHydrationWarning>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+			</head>
+			<body>
+				<AppProviders initialSession={initialSession}>
+					<div className="flex min-h-screen flex-col bg-bg text-text">
+						<Navbar />
+						<main className="flex flex-1 flex-col">{children}</main>
+					</div>
+				</AppProviders>
+			</body>
+		</html>
+	);
 }

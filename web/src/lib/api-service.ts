@@ -1,23 +1,22 @@
+import { API_URL } from "@/constants";
 import { axios } from "@/lib/axios";
-import { getSessionToken } from "@/lib/get-session-token";
+import type { GoogleProfile } from "@/types";
+
+interface SessionResponse {
+	user: GoogleProfile | null;
+}
 
 export const ApiService = {
-	async fetchSession() {
-		const { data } = await axios.get("/auth/me");
-		return (data as any)?.user ?? null;
+	async fetchSession(): Promise<GoogleProfile | null> {
+		const { data } = await axios.get<SessionResponse>("/auth/me");
+		return data?.user ?? null;
 	},
 
-	async getServerSession() {
-		const token = await getSessionToken();
-		if (!token) return { user: null, resolved: false };
-
-		const { data, error, responded } = await axios.get("/auth/me", token);
-		if (error) return { user: null, resolved: responded };
-
-		return { user: (data as any).user, resolved: true };
-	},
-
-	async logout() {
+	async logout(): Promise<void> {
 		await axios.post("/auth/logout");
 	},
 };
+
+export function startGoogleLogin(): void {
+	window.location.href = `${API_URL}/auth/google`;
+}

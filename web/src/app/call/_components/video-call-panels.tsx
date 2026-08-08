@@ -22,7 +22,6 @@ export function VideoCallPanels({
 }: VideoCallPanelsProps) {
   return (
     <>
-      {/* Remote */}
       <div className="relative flex-1 overflow-hidden bg-accent-900">
         <div
           className="absolute inset-0"
@@ -53,10 +52,8 @@ export function VideoCallPanels({
         </div>
       </div>
 
-      {/* Divider — horizontal when stacked (mobile), vertical when side-by-side */}
       <div className="z-[2] h-0.5 w-full flex-none bg-white/[0.12] sm:h-auto sm:w-0.5" />
 
-      {/* Local */}
       <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-accent-800">
         <div
           className="absolute inset-0 opacity-85"

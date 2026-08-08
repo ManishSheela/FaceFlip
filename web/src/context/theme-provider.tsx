@@ -23,7 +23,6 @@ export const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({ children }: { children: ReactNode }) {
 	const [theme, setThemeState] = useState<Theme>("light");
 
-	/* Hydrate from storage once, then reflect to <html> + persist */
 	useEffect(() => {
 		const stored = window.localStorage.getItem(
 			THEME_STORAGE_KEY,

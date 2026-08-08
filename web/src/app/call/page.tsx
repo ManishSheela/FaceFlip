@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/constants";
+import { CONNECT_DELAY_MS, ROUTES } from "@/constants";
 import { useCall } from "@/hooks/use-call";
 import { useFriends } from "@/hooks/use-friends";
 import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
@@ -10,11 +10,11 @@ import { useTimeout } from "@/hooks/use-timeout";
 import { formatDuration } from "@/lib/utils";
 import { EndCallDialog } from "@/components/dialogs/end-call-dialog";
 import { ReportDialog } from "@/components/dialogs/report-dialog";
-import { VideoCallPanels } from "@/components/screens/call/video-call-panels";
-import { VoiceCallOverlay } from "@/components/screens/call/voice-call-overlay";
-import { CallControlBar } from "@/components/screens/call/call-control-bar";
+import { VideoCallPanels } from "./_components/video-call-panels";
+import { VoiceCallOverlay } from "./_components/voice-call-overlay";
+import { CallControlBar } from "./_components/call-control-bar";
 
-export function CallScreen() {
+export default function CallPage() {
 	const router = useRouter();
 	const { activeFriend, callType } = useCall();
 	const { addRandomFriend } = useFriends();
@@ -29,11 +29,10 @@ export function CallScreen() {
 	const [endOpen, setEndOpen] = useState(false);
 	const [reportOpen, setReportOpen] = useState(false);
 
-	const elapsed = useElapsedTimer(true);
+	const elapsed = useElapsedTimer();
 	const timeLabel = formatDuration(elapsed);
 
-	// Simulated handshake: flip to "Connected" shortly after joining.
-	useTimeout(() => setConnected(true), connected ? null : 1000);
+	useTimeout(() => setConnected(true), connected ? null : CONNECT_DELAY_MS);
 
 	const endCall = () => {
 		setEndOpen(false);

@@ -7,11 +7,19 @@ const client = baseAxios.create({
 	timeout: REQUEST_TIMEOUT_MS,
 });
 
-function headersFor(token?: string) {
-	return token ? { headers: { cookie: `${SESSION_COOKIE}=${token}` } } : undefined;
+export interface Result<T> {
+	data: T | null;
+	error: unknown;
+	responded: boolean;
 }
 
-async function handle(promise: Promise<{ data: unknown }>) {
+function headersFor(token?: string) {
+	return token
+		? { headers: { cookie: `${SESSION_COOKIE}=${token}` } }
+		: undefined;
+}
+
+async function handle<T>(promise: Promise<{ data: T }>): Promise<Result<T>> {
 	try {
 		const res = await promise;
 		return { data: res.data, error: null, responded: true };
@@ -22,10 +30,12 @@ async function handle(promise: Promise<{ data: unknown }>) {
 }
 
 export const axios = {
-	get: (url: string, token?: string) => handle(client.get(url, headersFor(token))),
-	post: (url: string, body?: unknown, token?: string) =>
-		handle(client.post(url, body, headersFor(token))),
-	put: (url: string, body?: unknown, token?: string) =>
-		handle(client.put(url, body, headersFor(token))),
-	delete: (url: string, token?: string) => handle(client.delete(url, headersFor(token))),
+	get: <T>(url: string, token?: string) =>
+		handle<T>(client.get(url, headersFor(token))),
+	post: <T>(url: string, body?: unknown, token?: string) =>
+		handle<T>(client.post(url, body, headersFor(token))),
+	put: <T>(url: string, body?: unknown, token?: string) =>
+		handle<T>(client.put(url, body, headersFor(token))),
+	delete: <T>(url: string, token?: string) =>
+		handle<T>(client.delete(url, headersFor(token))),
 };

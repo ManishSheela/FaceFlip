@@ -8,10 +8,10 @@ import { useFriends } from "@/hooks/use-friends";
 import type { CallType, Friend } from "@/types";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
-import { RequestRow } from "@/components/screens/friends/request-row";
-import { FriendRow } from "@/components/screens/friends/friend-row";
+import { RequestRow } from "./_components/request-row";
+import { FriendRow } from "./_components/friend-row";
 
-export function FriendsScreen() {
+export default function FriendsPage() {
 	const router = useRouter();
 	const { friends, requests, acceptRequest, declineRequest } = useFriends();
 	const { startFriendCall, setActiveFriend } = useCall();

@@ -10,5 +10,3 @@ export const ROUTES = {
 	chat: "/chat",
 	settings: "/settings",
 } as const;
-
-export type RouteKey = keyof typeof ROUTES;

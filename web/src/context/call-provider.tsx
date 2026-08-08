@@ -15,7 +15,6 @@ export interface CallContextValue {
 	callType: CallType;
 	startFriendCall: (friend: Friend, type: CallType) => void;
 	startStrangerCall: () => void;
-	clearActiveFriend: () => void;
 }
 
 export const CallContext = createContext<CallContextValue | null>(null);
@@ -34,8 +33,6 @@ export function CallProvider({ children }: { children: ReactNode }) {
 		setCallType("video");
 	}, []);
 
-	const clearActiveFriend = useCallback(() => setActiveFriend(null), []);
-
 	const value = useMemo<CallContextValue>(
 		() => ({
 			activeFriend,
@@ -43,9 +40,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
 			callType,
 			startFriendCall,
 			startStrangerCall,
-			clearActiveFriend,
 		}),
-		[activeFriend, callType, startFriendCall, startStrangerCall, clearActiveFriend],
+		[activeFriend, callType, startFriendCall, startStrangerCall],
 	);
 
 	return <CallContext.Provider value={value}>{children}</CallContext.Provider>;
