@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { prisma } from "./db.js";
+import { CLIENT_ORIGIN, SESSION_COOKIE } from "./constants.js";
 import {
-  SESSION_COOKIE,
   exchangeCodeForProfile,
   googleAuthUrl,
   sessionCookieOptions,
@@ -9,8 +9,6 @@ import {
   toPublicUser,
   verifySession,
 } from "./auth.js";
-
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:3000";
 
 export const authRouter = Router();
 

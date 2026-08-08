@@ -7,9 +7,7 @@ import { Server } from "socket.io";
 import { Matchmaker } from "./matchmaker.js";
 import { authRouter } from "./auth-routes.js";
 import { registerSocketHandlers } from "./socket-handlers.js";
-
-const PORT = process.env.PORT || 4000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+import { CLIENT_ORIGIN, PORT, STUN_SERVER_URL } from "./constants.js";
 
 const app = express();
 app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
@@ -24,7 +22,7 @@ const io = new Server(httpServer, {
 const matchmaker = new Matchmaker();
 
 function iceServers() {
-  const servers = [{ urls: "stun:stun.l.google.com:19302" }];
+  const servers = [{ urls: STUN_SERVER_URL }];
 
   if (process.env.TURN_URL) {
     servers.push({

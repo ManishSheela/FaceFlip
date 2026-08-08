@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
-
-const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-const TOKEN_URL = "https://oauth2.googleapis.com/token";
-
-export const SESSION_COOKIE = "faceflip_session";
-const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+import {
+  GOOGLE_AUTH_URL,
+  GOOGLE_OAUTH_SCOPE,
+  GOOGLE_TOKEN_URL,
+  SESSION_JWT_EXPIRY,
+  SESSION_MAX_AGE_MS,
+} from "./constants.js";
 
 export const sessionCookieOptions = {
   httpOnly: true,
@@ -18,13 +19,13 @@ export function googleAuthUrl() {
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: process.env.GOOGLE_REDIRECT_URI,
     response_type: "code",
-    scope: "openid email profile",
+    scope: GOOGLE_OAUTH_SCOPE,
   });
-  return `${AUTH_URL}?${params}`;
+  return `${GOOGLE_AUTH_URL}?${params}`;
 }
 
 export async function exchangeCodeForProfile(code) {
-  const res = await fetch(TOKEN_URL, {
+  const res = await fetch(GOOGLE_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -51,7 +52,7 @@ export async function exchangeCodeForProfile(code) {
 
 export function signSession(userId) {
   return jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: SESSION_JWT_EXPIRY,
   });
 }
 
