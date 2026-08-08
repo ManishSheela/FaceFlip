@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CHAT_AUTO_REPLIES } from "@/constants";
+import { CHAT_AUTO_REPLIES, CHAT_REPLY_DELAY_MS } from "@/constants";
 import type { ChatMessage, Friend } from "@/types";
 
 function seedThread(friend: Friend): ChatMessage[] {
@@ -39,7 +39,7 @@ export function useChatThread(friend: Friend | null) {
 				...prev,
 				{ id: Date.now() + 1, text: reply, isMe: false },
 			]);
-		}, 1000);
+		}, CHAT_REPLY_DELAY_MS);
 	};
 
 	return { messages, input, setInput, send };

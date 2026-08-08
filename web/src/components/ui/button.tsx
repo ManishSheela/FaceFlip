@@ -4,6 +4,7 @@ import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { BLUEPRINT_CORNERS } from "@/constants";
 
 /**
  * Blueprint button. Mirrors the Industry design-system `.btn` classes:
@@ -38,8 +39,6 @@ const buttonVariants = cva(
   },
 );
 
-const CORNERS = ["tl", "tr", "bl", "br"] as const;
-
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -68,7 +67,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {blueprint &&
-          CORNERS.map((c) => <i key={c} className={cn("corner", c)} aria-hidden />)}
+          BLUEPRINT_CORNERS.map((c) => (
+            <i key={c} className={cn("corner", c)} aria-hidden />
+          ))}
         <Slottable>{children}</Slottable>
       </Comp>
     );

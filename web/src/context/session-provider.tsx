@@ -8,8 +8,8 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
+import { toast } from "sonner";
 import { ApiService } from "@/lib/api-service";
-import { loadOnboarding, saveOnboarding } from "@/lib/utils";
 import type {
 	GenderPref,
 	GoogleProfile,
@@ -23,14 +23,12 @@ interface Profile {
 	displayName: string | null;
 	genderPref: GenderPref | null;
 	userGender: UserGender | null;
-	ageConfirmed: boolean | null;
 }
 
 const INITIAL_PROFILE: Profile = {
 	displayName: null,
 	genderPref: null,
 	userGender: null,
-	ageConfirmed: null,
 };
 
 export interface SessionState {
@@ -41,14 +39,12 @@ export interface SessionState {
 	profileEmail: string;
 	genderPref: GenderPref;
 	userGender: UserGender | null;
-	ageConfirmed: boolean;
 }
 
 export interface SessionActions {
 	setProfileName: (name: string) => void;
 	setGenderPref: (pref: GenderPref) => void;
 	setUserGender: (gender: UserGender) => void;
-	setAgeConfirmed: (confirmed: boolean) => void;
 	refresh: () => Promise<void>;
 	signOut: () => Promise<void>;
 }
@@ -90,21 +86,7 @@ export function SessionProvider({
 		};
 	}, [alreadyResolved]);
 
-	const userId = user?.id ?? null;
-
-	useEffect(() => {
-		if (!userId) return;
-		const saved = loadOnboarding(userId);
-		if (saved) setProfile((prev) => ({ ...prev, ...saved }));
-	}, [userId]);
-
 	const userGender = profile.userGender ?? user?.gender ?? null;
-	const ageConfirmed = profile.ageConfirmed ?? user?.ageConfirmed ?? false;
-
-	useEffect(() => {
-		if (!userId || userGender === null || !ageConfirmed) return;
-		saveOnboarding(userId, { userGender, ageConfirmed });
-	}, [userId, userGender, ageConfirmed]);
 
 	const state = useMemo<SessionState>(
 		() => ({
@@ -115,20 +97,34 @@ export function SessionProvider({
 			profileEmail: user?.email ?? "",
 			genderPref: profile.genderPref ?? user?.genderPref ?? "random",
 			userGender,
-			ageConfirmed,
 		}),
-		[user, status, profile, userGender, ageConfirmed],
+		[user, status, profile, userGender],
 	);
 
 	const actions = useMemo<SessionActions>(() => {
 		const update = (patch: Partial<Profile>) =>
 			setProfile((prev) => ({ ...prev, ...patch }));
 
+		const persist = async (patch: {
+			gender?: UserGender;
+			genderPref?: GenderPref;
+		}) => {
+			if (!userRef.current) return;
+			const saved = await ApiService.updateProfile(patch);
+			if (saved) setUser(saved);
+			else toast.error("Couldn't save your preference. Please try again.");
+		};
+
 		return {
 			setProfileName: (displayName) => update({ displayName }),
-			setGenderPref: (genderPref) => update({ genderPref }),
-			setUserGender: (userGender) => update({ userGender }),
-			setAgeConfirmed: (ageConfirmed) => update({ ageConfirmed }),
+			setGenderPref: (genderPref) => {
+				update({ genderPref });
+				void persist({ genderPref });
+			},
+			setUserGender: (userGender) => {
+				update({ userGender });
+				void persist({ gender: userGender });
+			},
 			refresh: async () => {
 				const fetched = await ApiService.fetchSession();
 				setUser(fetched);

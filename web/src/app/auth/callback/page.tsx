@@ -8,7 +8,7 @@ import { CenteredScreen } from "@/components/layout/centered-screen";
 
 export default function AuthCallbackPage() {
 	const router = useRouter();
-	const { status, user, userGender, ageConfirmed } = useSession();
+	const { status, user, userGender } = useSession();
 
 	useEffect(() => {
 		if (status === "loading") return;
@@ -18,10 +18,8 @@ export default function AuthCallbackPage() {
 			return;
 		}
 
-		router.replace(
-			userGender && ageConfirmed ? ROUTES.gender : ROUTES.onboarding,
-		);
-	}, [status, user, userGender, ageConfirmed, router]);
+		router.replace(userGender ? ROUTES.gender : ROUTES.onboarding);
+	}, [status, user, userGender, router]);
 
 	return (
 		<CenteredScreen>

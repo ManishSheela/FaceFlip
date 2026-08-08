@@ -10,3 +10,5 @@ export const ROUTES = {
 	chat: "/chat",
 	settings: "/settings",
 } as const;
+
+export const CHROMELESS_ROUTES: string[] = [ROUTES.call];

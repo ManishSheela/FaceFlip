@@ -3,11 +3,12 @@ import {
   GOOGLE_AUTH_URL,
   GOOGLE_OAUTH_SCOPE,
   GOOGLE_TOKEN_URL,
+  SESSION_COOKIE,
   SESSION_JWT_EXPIRY,
   SESSION_MAX_AGE_MS,
 } from "./constants.js";
 
-export const sessionCookieOptions = {
+const sessionCookieOptions = {
   httpOnly: true,
   sameSite: "lax",
   secure: process.env.NODE_ENV === "production",
@@ -50,29 +51,23 @@ export async function exchangeCodeForProfile(code) {
   };
 }
 
-export function signSession(userId) {
-  return jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
+export function setSessionCookie(res, userId) {
+  const token = jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
     expiresIn: SESSION_JWT_EXPIRY,
   });
+  res.cookie(SESSION_COOKIE, token, sessionCookieOptions);
 }
 
-export function verifySession(token) {
+export function clearSessionCookie(res) {
+  res.clearCookie(SESSION_COOKIE, sessionCookieOptions);
+}
+
+export function getSessionUserId(req) {
+  const token = req.cookies[SESSION_COOKIE];
   if (!token) return null;
   try {
     return jwt.verify(token, process.env.JWT_SECRET).sub;
   } catch {
     return null;
   }
-}
-
-export function toPublicUser(user) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    picture: user.picture,
-    gender: user.gender?.toLowerCase() ?? null,
-    ageConfirmed: user.ageConfirmed,
-    genderPref: user.genderPref.toLowerCase(),
-  };
 }

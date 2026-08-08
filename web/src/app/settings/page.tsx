@@ -15,6 +15,7 @@ import {
 	GENDER_PREF_OPTIONS,
 	MICROPHONE_DEVICES,
 	ROUTES,
+	THEME_OPTIONS,
 	USER_GENDER_OPTIONS,
 } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
@@ -40,11 +41,6 @@ import { ToggleRow } from "@/components/blueprint/toggle-row";
 import { GoogleIcon } from "@/components/icons/google-icon";
 
 const ICON = { className: "h-[13px] w-[13px]", strokeWidth: 1.5 } as const;
-
-const THEME_OPTIONS: { label: string; value: Theme }[] = [
-	{ label: "Light", value: "light" },
-	{ label: "Dark", value: "dark" },
-];
 
 export default function SettingsPage() {
 	return (

@@ -1,13 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-
-const CORNERS = ["tl", "tr", "bl", "br"] as const;
+import { BLUEPRINT_CORNERS } from "@/constants";
 
 /** The four `+` registration marks drawn just outside a blueprint box. */
 export function CornerMarks() {
   return (
     <>
-      {CORNERS.map((c) => (
+      {BLUEPRINT_CORNERS.map((c) => (
         <i key={c} className={cn("corner", c)} aria-hidden />
       ))}
     </>

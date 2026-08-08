@@ -10,3 +10,21 @@ export const GOOGLE_OAUTH_SCOPE = "openid email profile";
 export const SESSION_COOKIE = "faceflip_session";
 export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 export const SESSION_JWT_EXPIRY = "30d";
+
+export const CLIENT_AUTH_PATH = "/auth";
+export const CLIENT_AUTH_CALLBACK_PATH = "/auth/callback";
+
+export const GENDER_VALUES = {
+  male: "MALE",
+  female: "FEMALE",
+  random: "RANDOM",
+};
+
+export const SERVER_ERROR = "Something went wrong.";
+
+export const AUTH_ERRORS = {
+  notSignedIn: "Not signed in.",
+  invalidGender: "Invalid gender.",
+  invalidGenderPref: "Invalid match preference.",
+  nothingToUpdate: "Nothing to update.",
+};

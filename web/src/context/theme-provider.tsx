@@ -8,9 +8,8 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
+import { THEME_STORAGE_KEY } from "@/constants";
 import type { Theme } from "@/types";
-
-const THEME_STORAGE_KEY = "faceflip-theme";
 
 export interface ThemeContextValue {
 	theme: Theme;

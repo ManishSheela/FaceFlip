@@ -1,22 +1,22 @@
 import { API_URL } from "@/constants";
 import { axios } from "@/lib/axios";
-import type { GoogleProfile } from "@/types";
-
-interface SessionResponse {
-	user: GoogleProfile | null;
-}
 
 export const ApiService = {
-	async fetchSession(): Promise<GoogleProfile | null> {
-		const { data } = await axios.get<SessionResponse>("/auth/me");
+	async fetchSession() {
+		const { data } = await axios.get<any>("/auth/me");
 		return data?.user ?? null;
 	},
 
-	async logout(): Promise<void> {
+	async updateProfile(patch: any) {
+		const { data } = await axios.patch<any>("/auth/me", patch);
+		return data?.user ?? null;
+	},
+
+	async logout() {
 		await axios.post("/auth/logout");
 	},
 };
 
-export function startGoogleLogin(): void {
+export function startGoogleLogin() {
 	window.location.href = `${API_URL}/auth/google`;
 }

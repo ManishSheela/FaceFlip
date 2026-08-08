@@ -36,6 +36,8 @@ export const axios = {
 		handle<T>(client.post(url, body, headersFor(token))),
 	put: <T>(url: string, body?: unknown, token?: string) =>
 		handle<T>(client.put(url, body, headersFor(token))),
+	patch: <T>(url: string, body?: unknown, token?: string) =>
+		handle<T>(client.patch(url, body, headersFor(token))),
 	delete: <T>(url: string, token?: string) =>
 		handle<T>(client.delete(url, headersFor(token))),
 };

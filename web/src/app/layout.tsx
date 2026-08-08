@@ -3,7 +3,7 @@ import "./globals.css";
 import { AppProviders } from "@/context/app-providers";
 import { Navbar } from "@/components/layout/navbar";
 import { getServerSession } from "@/lib/server-session";
-import { APP_NAME } from "@/constants";
+import { APP_NAME, THEME_STORAGE_KEY } from "@/constants";
 
 export const metadata: Metadata = {
 	title: `${APP_NAME} — Every flip, a new face`,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const themeScript = `
 (function () {
   try {
-    var t = localStorage.getItem('faceflip-theme');
+    var t = localStorage.getItem('${THEME_STORAGE_KEY}');
     document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
   } catch (e) {}
 })();

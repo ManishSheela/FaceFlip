@@ -2,7 +2,7 @@ export type Theme = "light" | "dark";
 
 export type GenderPref = "male" | "female" | "random";
 
-export type UserGender = "male" | "female" | "other";
+export type UserGender = "male" | "female" | "random";
 
 export type CallType = "video" | "voice";
 
@@ -44,7 +44,6 @@ export interface GoogleProfile {
 	email: string;
 	picture: string | null;
 	gender: UserGender | null;
-	ageConfirmed: boolean;
 	genderPref: GenderPref;
 	friendCount: number;
 }

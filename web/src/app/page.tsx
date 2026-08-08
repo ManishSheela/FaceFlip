@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { FEATURE_CARDS, ROUTES } from "@/constants";
-import { Button } from "@/components/ui/button";
+import { FEATURE_CARDS } from "@/constants";
 import { FeatureCard } from "@/components/blueprint/feature-card";
+import { AgeGate } from "./_components/age-gate";
 
 export default function HomePage() {
 	return (
@@ -17,14 +16,7 @@ export default function HomePage() {
 				genuine moments.
 			</p>
 
-			<Button
-				asChild
-				variant="primary"
-				blueprint
-				className="h-auto px-10 py-3.5 text-base"
-			>
-				<Link href={ROUTES.auth}>Start Chatting</Link>
-			</Button>
+			<AgeGate />
 
 			<div className="mt-5 flex flex-wrap justify-center gap-3.5">
 				{FEATURE_CARDS.map((card) => (

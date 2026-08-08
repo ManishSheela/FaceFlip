@@ -2,7 +2,12 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
-import { APP_NAME, GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
+import {
+	APP_NAME,
+	CHROMELESS_ROUTES,
+	GENDER_PREF_OPTIONS,
+	ROUTES,
+} from "@/constants";
 import { useFriends } from "@/hooks/use-friends";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
@@ -10,8 +15,6 @@ import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
 import { Tag } from "@/components/blueprint/tag";
-const CHROMELESS_ROUTES: string[] = [ROUTES.call];
-
 export function Navbar() {
 	const router = useRouter();
 	const pathname = usePathname();

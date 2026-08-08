@@ -1,36 +1,22 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { UserGender } from "@/types";
-
-const ONBOARDING_STORAGE_PREFIX = "faceflip-onboarding:";
-
-interface StoredOnboarding {
-	userGender: UserGender;
-	ageConfirmed: boolean;
-}
+import { AGE_CONFIRMED_STORAGE_KEY } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function loadOnboarding(googleId: string): StoredOnboarding | null {
+export function loadAgeConfirmed(): boolean {
 	try {
-		const raw = window.localStorage.getItem(
-			ONBOARDING_STORAGE_PREFIX + googleId,
-		);
-		if (!raw) return null;
-		return JSON.parse(raw) as StoredOnboarding;
+		return window.localStorage.getItem(AGE_CONFIRMED_STORAGE_KEY) === "true";
 	} catch {
-		return null;
+		return false;
 	}
 }
 
-export function saveOnboarding(googleId: string, data: StoredOnboarding): void {
+export function saveAgeConfirmed(confirmed: boolean): void {
 	try {
-		window.localStorage.setItem(
-			ONBOARDING_STORAGE_PREFIX + googleId,
-			JSON.stringify(data),
-		);
+		window.localStorage.setItem(AGE_CONFIRMED_STORAGE_KEY, String(confirmed));
 	} catch {
 		return;
 	}

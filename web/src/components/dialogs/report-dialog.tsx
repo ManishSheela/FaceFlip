@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { REPORT_REASONS } from "@/constants";
+import { REPORT_AUTOCLOSE_MS, REPORT_REASONS } from "@/constants";
 import type { ReportReason } from "@/types";
 import {
   Dialog,
@@ -33,10 +33,7 @@ export function ReportDialog({ open, onOpenChange }: ReportDialogProps) {
   }, [open]);
 
   // Auto-close shortly after a successful submit.
-  useTimeout(
-    () => onOpenChange(false),
-    submitted ? 1600 : null,
-  );
+  useTimeout(() => onOpenChange(false), submitted ? REPORT_AUTOCLOSE_MS : null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

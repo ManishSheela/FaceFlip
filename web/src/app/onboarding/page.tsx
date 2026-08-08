@@ -9,15 +9,14 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
-import { ToggleRow } from "@/components/blueprint/toggle-row";
 import type { UserGender } from "@/types";
 
 export default function OnboardingPage() {
 	const router = useRouter();
-	const { isAuthenticated, userGender, ageConfirmed } = useSession();
-	const { setUserGender, setAgeConfirmed } = useSessionActions();
+	const { isAuthenticated, userGender } = useSession();
+	const { setUserGender } = useSessionActions();
 
-	const canContinue = userGender !== null && ageConfirmed;
+	const canContinue = userGender !== null;
 
 	const handleContinue = () => {
 		if (!canContinue) return;
@@ -52,15 +51,6 @@ export default function OnboardingPage() {
 							</label>
 						))}
 					</RadioGroup>
-				</div>
-
-				<div className="border-t border-divider pt-3.5">
-					<ToggleRow
-						title="I confirm that I am 18 years of age or older"
-						description="You must be an adult to use FaceFliip."
-						checked={ageConfirmed}
-						onCheckedChange={setAgeConfirmed}
-					/>
 				</div>
 
 				<Button

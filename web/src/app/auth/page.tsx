@@ -4,18 +4,13 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
-import { ROUTES } from "@/constants";
+import { AUTH_ERROR_MESSAGES, ROUTES } from "@/constants";
 import { useSessionActions } from "@/hooks/use-session";
 import { startGoogleLogin } from "@/lib/api-service";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import { GoogleIcon } from "@/components/icons/google-icon";
-
-const ERROR_MESSAGES: Record<string, string> = {
-	cancelled: "Google sign-in was cancelled.",
-	failed: "Couldn't complete Google sign-in. Please try again.",
-};
 
 export default function AuthPage() {
 	return (
@@ -30,7 +25,7 @@ function Auth() {
 	const { signOut } = useSessionActions();
 	const errorCode = useSearchParams().get("error");
 	const error = errorCode
-		? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.failed)
+		? (AUTH_ERROR_MESSAGES[errorCode] ?? AUTH_ERROR_MESSAGES.failed)
 		: null;
 
 	const continueAsGuest = async () => {

@@ -3,12 +3,19 @@ import type {
 	FeatureCard,
 	GenderPref,
 	ReportReason,
+	Theme,
 	UserGender,
 } from "@/types";
 
 export * from "./routes";
 
 export const APP_NAME = "FaceFliip";
+
+export const THEME_STORAGE_KEY = "faceflip-theme";
+
+export const AGE_CONFIRMED_STORAGE_KEY = "faceflip-age-confirmed";
+
+export const BLUEPRINT_CORNERS = ["tl", "tr", "bl", "br"] as const;
 
 export const API_URL =
 	process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
@@ -20,6 +27,10 @@ export const REQUEST_TIMEOUT_MS = 15000;
 export const MATCHING_DURATION_SEC = 3;
 
 export const CONNECT_DELAY_MS = 1000;
+
+export const CHAT_REPLY_DELAY_MS = 1000;
+
+export const REPORT_AUTOCLOSE_MS = 1600;
 
 export const ONLINE_COUNT = "12,847";
 
@@ -54,8 +65,18 @@ export const GENDER_PREF_OPTIONS: { label: string; value: GenderPref }[] = (
 export const USER_GENDER_OPTIONS: { label: string; value: UserGender }[] = [
 	{ label: "Male", value: "male" },
 	{ label: "Female", value: "female" },
-	{ label: "Other", value: "other" },
+	{ label: "Random", value: "random" },
 ];
+
+export const THEME_OPTIONS: { label: string; value: Theme }[] = [
+	{ label: "Light", value: "light" },
+	{ label: "Dark", value: "dark" },
+];
+
+export const AUTH_ERROR_MESSAGES: Record<string, string> = {
+	cancelled: "Google sign-in was cancelled.",
+	failed: "Couldn't complete Google sign-in. Please try again.",
+};
 
 export const REPORT_REASONS: { value: ReportReason; label: string }[] = [
 	{ value: "spam", label: "Spam or advertising" },
