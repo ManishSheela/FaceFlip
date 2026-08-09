@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useTimeout } from "@/hooks/use-timeout";
 
 interface ReportDialogProps {
   open: boolean;
@@ -32,8 +31,11 @@ export function ReportDialog({ open, onOpenChange }: ReportDialogProps) {
     }
   }, [open]);
 
-  // Auto-close shortly after a successful submit.
-  useTimeout(() => onOpenChange(false), submitted ? REPORT_AUTOCLOSE_MS : null);
+  useEffect(() => {
+    if (!submitted) return;
+    const id = setTimeout(() => onOpenChange(false), REPORT_AUTOCLOSE_MS);
+    return () => clearTimeout(id);
+  }, [submitted, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

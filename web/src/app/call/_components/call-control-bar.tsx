@@ -2,6 +2,7 @@
 
 import {
   Flag,
+  MessageSquare,
   Mic,
   MicOff,
   PhoneOff,
@@ -12,12 +13,16 @@ import {
   VideoOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/blueprint/tag";
 
 interface CallControlBarProps {
   micOn: boolean;
   camOn: boolean;
   isVideo: boolean;
   isFriendCall: boolean;
+  chatOpen?: boolean;
+  unreadCount?: number;
+  onToggleChat?: () => void;
   onToggleMic: () => void;
   onToggleCam: () => void;
   onNext: () => void;
@@ -35,6 +40,9 @@ export function CallControlBar({
   camOn,
   isVideo,
   isFriendCall,
+  chatOpen,
+  unreadCount = 0,
+  onToggleChat,
   onToggleMic,
   onToggleCam,
   onNext,
@@ -69,6 +77,26 @@ export function CallControlBar({
         <Button variant="primary" blueprint className="gap-1.5" onClick={onNext}>
           <SkipForward className="h-4 w-4" strokeWidth={1.5} />
           Next
+        </Button>
+      )}
+
+      {onToggleChat && (
+        <Button
+          variant={chatOpen ? "primary" : "glass"}
+          size="icon"
+          onClick={onToggleChat}
+          title={chatOpen ? "Hide chat" : "Show chat"}
+          className="relative"
+        >
+          <MessageSquare className="h-4 w-4" strokeWidth={1.5} />
+          {unreadCount > 0 && !chatOpen && (
+            <Tag
+              variant="accent"
+              className="absolute -right-1.5 -top-1.5 px-1 py-0 text-[10px]"
+            >
+              {unreadCount}
+            </Tag>
+          )}
         </Button>
       )}
 

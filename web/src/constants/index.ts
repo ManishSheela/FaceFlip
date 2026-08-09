@@ -2,6 +2,7 @@ import type {
 	DeviceOption,
 	FeatureCard,
 	GenderPref,
+	MatchErrorCode,
 	ReportReason,
 	Theme,
 	UserGender,
@@ -24,15 +25,34 @@ export const SESSION_COOKIE = "faceflip_session";
 
 export const REQUEST_TIMEOUT_MS = 15000;
 
-export const MATCHING_DURATION_SEC = 3;
-
-export const CONNECT_DELAY_MS = 1000;
-
 export const CHAT_REPLY_DELAY_MS = 1000;
 
 export const REPORT_AUTOCLOSE_MS = 1600;
 
-export const ONLINE_COUNT = "12,847";
+export const MAX_CHAT_LENGTH = 500;
+
+export const TYPING_IDLE_MS = 1500;
+
+export const MEDIA_CONSTRAINTS: MediaStreamConstraints = {
+	video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+	audio: { echoCancellation: true, noiseSuppression: true },
+};
+
+export const DEFAULT_ICE_SERVERS: RTCIceServer[] = [
+	{ urls: "stun:stun.l.google.com:19302" },
+];
+
+export const MATCH_ERROR_MESSAGES: Record<MatchErrorCode, string> = {
+	"media-denied":
+		"Camera and microphone access was blocked. Allow access to start matching.",
+	"media-unavailable":
+		"No camera or microphone was found. Connect a device and try again.",
+	"server-unreachable":
+		"Can't reach the matching server. Check your connection and try again.",
+	"connection-failed":
+		"The connection to your match dropped. Search again to find someone new.",
+	"partner-left": "Your match disconnected.",
+};
 
 export const FEATURE_CARDS: FeatureCard[] = [
 	{
@@ -109,3 +129,14 @@ export const MICROPHONE_DEVICES: DeviceOption[] = [
 	{ label: "Built-in microphone", value: "Built-in microphone" },
 	{ label: "Headset mic", value: "Headset mic" },
 ];
+
+export const REMOTE_GRADIENT =
+  "linear-gradient(135deg, var(--color-accent-900), var(--color-accent-700), var(--color-accent-800))";
+export const LOCAL_GRADIENT =
+  "linear-gradient(225deg, var(--color-accent-800), var(--color-accent-900), var(--color-accent-700))";
+
+export const GENDER_COLORS: Record<UserGender, string> = {
+  male: "#3b82f6",
+  female: "#ec4899",
+  random: "#eab308",
+};

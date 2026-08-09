@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, UserPlus } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { useFriends } from "@/hooks/use-friends";
 import { formatDuration } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -20,7 +19,6 @@ export default function PostCallPage() {
 }
 
 function PostCall() {
-	const { addRandomFriend } = useFriends();
 	const seconds = Number(useSearchParams().get("d")) || 0;
 
 	return (
@@ -34,12 +32,7 @@ function PostCall() {
 					<Link href={ROUTES.matching}>Next stranger</Link>
 				</Button>
 
-				<Button
-					variant="secondary"
-					block
-					className="gap-1.5"
-					onClick={addRandomFriend}
-				>
+				<Button variant="secondary" block className="gap-1.5">
 					<UserPlus className="h-3.5 w-3.5" strokeWidth={1.5} />
 					Add as Friend
 				</Button>

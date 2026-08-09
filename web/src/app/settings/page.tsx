@@ -1,15 +1,9 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-	Bell,
-	ChevronLeft,
-	User,
-	UserCircle,
-	UserPlus,
-	Video,
-} from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Bell, ChevronLeft, User, UserCircle, UserPlus, Video } from "lucide-react";
 import {
 	CAMERA_DEVICES,
 	GENDER_PREF_OPTIONS,
@@ -18,11 +12,8 @@ import {
 	THEME_OPTIONS,
 	USER_GENDER_OPTIONS,
 } from "@/constants";
-import { useSession, useSessionActions } from "@/hooks/use-session";
-import { useTheme } from "@/hooks/use-theme";
-import { startGoogleLogin } from "@/lib/api-service";
 import { getInitials } from "@/lib/utils";
-import type { Theme } from "@/types";
+import type { GenderPref, Theme, UserGender } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +29,6 @@ import { Tag } from "@/components/blueprint/tag";
 import { SectionCard } from "@/components/blueprint/section-card";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
 import { ToggleRow } from "@/components/blueprint/toggle-row";
-import { GoogleIcon } from "@/components/icons/google-icon";
 
 const ICON = { className: "h-[13px] w-[13px]", strokeWidth: 1.5 } as const;
 
@@ -51,21 +41,21 @@ export default function SettingsPage() {
 }
 
 function Settings() {
-	const router = useRouter();
 	const searchParams = useSearchParams();
 	const fromCall = searchParams.get("from") === "call";
 
-	const { theme, setTheme } = useTheme();
-	const { isAuthenticated, userGender, genderPref, profileName, profileEmail } =
-		useSession();
-	const { setUserGender, setGenderPref, setProfileName } = useSessionActions();
+	const [theme, setTheme] = useState<Theme>("light");
+	const [userGender, setUserGender] = useState<UserGender>(
+		USER_GENDER_OPTIONS[0].value,
+	);
+	const [genderPref, setGenderPref] = useState<GenderPref>("random");
+	const [profileName, setProfileName] = useState("Alex Rivera");
+	const profileEmail = "alex@example.com";
 
 	const [camDevice, setCamDevice] = useState(CAMERA_DEVICES[0].value);
 	const [micDevice, setMicDevice] = useState(MICROPHONE_DEVICES[0].value);
 	const [notifyMatches, setNotifyMatches] = useState(true);
 	const [notifyUpdates, setNotifyUpdates] = useState(false);
-
-	const close = () => router.push(fromCall ? ROUTES.call : ROUTES.landing);
 
 	return (
 		<section className="mx-auto flex w-full max-w-[720px] animate-fade-slide-in flex-col gap-[17px] px-3.5 pb-16 pt-5">
@@ -76,100 +66,72 @@ function Settings() {
 						Manage your account, preferences and devices.
 					</p>
 				</div>
-				<Button variant="secondary" onClick={close}>
-					<ChevronLeft {...ICON} />
-					{fromCall ? "Back to call" : "Close"}
+				<Button asChild variant="secondary">
+					<Link href={fromCall ? ROUTES.call : ROUTES.landing}>
+						<ChevronLeft {...ICON} />
+						{fromCall ? "Back to call" : "Close"}
+					</Link>
 				</Button>
 			</div>
 
-			{isAuthenticated ? (
-				<SectionCard
-					kicker="Profile"
-					icon={<User {...ICON} />}
-					bodyClassName="p-0"
-				>
-					<div className="flex flex-wrap items-center gap-5 p-4">
-						<div className="flex flex-col items-center gap-1.5">
-							<Avatar initials={getInitials(profileName)} size={72} framed />
-							<Tag variant="accent" className="text-[10px]">
-								Verified
-							</Tag>
-						</div>
-						<div className="flex min-w-[200px] flex-1 flex-col gap-2.5">
-							<div className="flex flex-col gap-1">
-								<Label htmlFor="displayName">Display name</Label>
-								<Input
-									id="displayName"
-									value={profileName}
-									onChange={(e) => setProfileName(e.target.value)}
-								/>
-							</div>
-							<div className="flex flex-col gap-1">
-								<Label htmlFor="email">Email</Label>
-								<Input
-									id="email"
-									value={profileEmail}
-									readOnly
-									className="opacity-60"
-								/>
-							</div>
-						</div>
+			<SectionCard kicker="Profile" icon={<User {...ICON} />} bodyClassName="p-0">
+				<div className="flex flex-wrap items-center gap-5 p-4">
+					<div className="flex flex-col items-center gap-1.5">
+						<Avatar initials={getInitials(profileName)} size={72} framed />
+						<Tag variant="accent" className="text-[10px]">
+							Verified
+						</Tag>
 					</div>
-				</SectionCard>
-			) : (
-				<SectionCard
-					kicker="Guest session"
-					icon={<User {...ICON} />}
-					bodyClassName="p-0"
-				>
-					<div className="flex flex-wrap items-center justify-between gap-3.5 p-4">
-						<p className="text-muted m-0 max-w-[340px] text-sm">
-							Sign in to save preferences, access friends and keep chat history.
-						</p>
-						<Button
-							variant="primary"
-							blueprint
-							className="gap-1.5"
-							onClick={startGoogleLogin}
-						>
-							<GoogleIcon size={15} />
-							Sign in with Google
-						</Button>
-					</div>
-				</SectionCard>
-			)}
-			<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
-				{isAuthenticated && (
-					<SectionCard kicker="Your gender" icon={<User {...ICON} />}>
-						<div className="flex flex-col gap-2.5">
-							<p className="text-muted m-0 text-[13px]">
-								Shown on your profile. Set during sign-in.
-							</p>
-							<SegmentedControl
-								aria-label="Your gender"
-								options={USER_GENDER_OPTIONS}
-								value={userGender ?? USER_GENDER_OPTIONS[0].value}
-								onValueChange={setUserGender}
+					<div className="flex min-w-[200px] flex-1 flex-col gap-2.5">
+						<div className="flex flex-col gap-1">
+							<Label htmlFor="displayName">Display name</Label>
+							<Input
+								id="displayName"
+								value={profileName}
+								onChange={(e) => setProfileName(e.target.value)}
 							/>
 						</div>
-					</SectionCard>
-				)}
+						<div className="flex flex-col gap-1">
+							<Label htmlFor="email">Email</Label>
+							<Input
+								id="email"
+								value={profileEmail}
+								readOnly
+								className="opacity-60"
+							/>
+						</div>
+					</div>
+				</div>
+			</SectionCard>
 
-				{isAuthenticated && (
-					<SectionCard kicker="Match preference" icon={<UserPlus {...ICON} />}>
-						<div className="flex flex-col gap-2.5">
-							<p className="text-muted m-0 text-[13px]">
-								Who do you want to be matched with?
-							</p>
-							<SegmentedControl
-								aria-label="Match preference"
-								options={GENDER_PREF_OPTIONS}
-								value={genderPref}
-								onValueChange={setGenderPref}
-							/>
-						</div>
-					</SectionCard>
-				)}
+			<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+				<SectionCard kicker="Your gender" icon={<User {...ICON} />}>
+					<div className="flex flex-col gap-2.5">
+						<p className="text-muted m-0 text-[13px]">
+							Shown on your profile. Set during sign-in.
+						</p>
+						<SegmentedControl
+							aria-label="Your gender"
+							options={USER_GENDER_OPTIONS}
+							value={userGender}
+							onValueChange={setUserGender}
+						/>
+					</div>
+				</SectionCard>
+
+				<SectionCard kicker="Match preference" icon={<UserPlus {...ICON} />}>
+					<div className="flex flex-col gap-2.5">
+						<p className="text-muted m-0 text-[13px]">
+							Who do you want to be matched with?
+						</p>
+						<SegmentedControl
+							aria-label="Match preference"
+							options={GENDER_PREF_OPTIONS}
+							value={genderPref}
+							onValueChange={setGenderPref}
+						/>
+					</div>
+				</SectionCard>
 
 				<SectionCard kicker="Appearance" icon={<UserCircle {...ICON} />}>
 					<div className="flex flex-col gap-2.5">
@@ -186,6 +148,7 @@ function Settings() {
 					</div>
 				</SectionCard>
 			</div>
+
 			<SectionCard kicker="Camera & microphone" icon={<Video {...ICON} />}>
 				<div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
 					<div className="flex flex-col gap-1">
@@ -220,6 +183,7 @@ function Settings() {
 					</div>
 				</div>
 			</SectionCard>
+
 			<SectionCard kicker="Notifications" icon={<Bell {...ICON} />}>
 				<div className="flex flex-col gap-3.5">
 					<ToggleRow

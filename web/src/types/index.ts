@@ -52,3 +52,55 @@ export interface ServerSession {
 	user: GoogleProfile | null;
 	resolved: boolean;
 }
+
+export type MatchStatus =
+	| "idle"
+	| "preparing"
+	| "searching"
+	| "matched"
+	| "connected"
+	| "ended";
+
+export type MatchErrorCode =
+	| "media-denied"
+	| "media-unavailable"
+	| "server-unreachable"
+	| "connection-failed"
+	| "partner-left";
+
+export interface PartnerProfile {
+	name: string | null;
+	gender: UserGender | null;
+}
+
+export interface MatchInfo {
+	roomId: string;
+	partnerId: string;
+	partner: PartnerProfile;
+	initiator: boolean;
+}
+
+export interface QueueStats {
+	waiting: number;
+	active: number;
+	online: number;
+	position: number;
+}
+
+export interface StrangerMessage {
+	id: string;
+	text: string;
+	timestamp: number;
+	fromSelf: boolean;
+}
+
+export interface PartnerMedia {
+	audio: boolean;
+	video: boolean;
+}
+
+export type MediaKind = keyof PartnerMedia;
+
+export type SignalData =
+	| { kind: "description"; description: RTCSessionDescriptionInit }
+	| { kind: "candidate"; candidate: RTCIceCandidateInit };

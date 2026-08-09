@@ -1,19 +1,6 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Search } from "lucide-react";
-import {
-	GENDER_PREF_LABELS,
-	MATCHING_DURATION_SEC,
-	ONLINE_COUNT,
-	ROUTES,
-} from "@/constants";
-import { useCall } from "@/hooks/use-call";
-import { useSession } from "@/hooks/use-session";
-import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
-import { useTimeout } from "@/hooks/use-timeout";
-import { formatDuration } from "@/lib/utils";
+import { ROUTES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Tag } from "@/components/blueprint/tag";
 import { RadarRings } from "@/components/blueprint/radar-rings";
@@ -27,19 +14,6 @@ const TARGET_CORNERS = [
 ] as const;
 
 export default function MatchingPage() {
-	const router = useRouter();
-	const { isAuthenticated, genderPref } = useSession();
-	const { startStrangerCall } = useCall();
-	const elapsed = useElapsedTimer();
-
-	useEffect(() => {
-		startStrangerCall();
-	}, [startStrangerCall]);
-
-	useTimeout(() => router.push(ROUTES.call), MATCHING_DURATION_SEC * 1000);
-
-	const cancel = () => router.push(isAuthenticated ? ROUTES.gender : ROUTES.auth);
-
 	return (
 		<section className="relative flex flex-1 animate-fade-slide-in flex-col items-center justify-center overflow-hidden p-5">
 			<div className="grid-overlay pointer-events-none absolute inset-0" />
@@ -63,10 +37,7 @@ export default function MatchingPage() {
 								className={`absolute h-2 w-2 border-accent ${pos}`}
 							/>
 						))}
-						<Search
-							className="h-[26px] w-[26px] text-accent"
-							strokeWidth={1.5}
-						/>
+						<Search className="h-[26px] w-[26px] text-accent" strokeWidth={1.5} />
 					</div>
 				</RadarRings>
 
@@ -74,7 +45,7 @@ export default function MatchingPage() {
 					<h3 className="m-0 text-xl">Finding your match</h3>
 					<div className="mt-1 flex flex-col items-center gap-0.5">
 						<span className="font-heading text-[26px] tracking-[0.06em] text-accent">
-							{formatDuration(elapsed)}
+							00:00
 						</span>
 						<span className="text-muted text-[10px] uppercase tracking-[0.08em]">
 							Elapsed
@@ -83,15 +54,15 @@ export default function MatchingPage() {
 				</div>
 
 				<div className="flex items-stretch gap-8 border border-divider px-8 py-3.5">
-					<StatItem value={ONLINE_COUNT} label="Online" />
+					<StatItem value="12,847" label="Online" />
 					<div className="w-px bg-divider" />
-					<StatItem value={GENDER_PREF_LABELS[genderPref]} label="Preference" />
+					<StatItem value="#1" label="Queue spot" />
 					<div className="w-px bg-divider" />
-					<StatItem value="Global" label="Region" />
+					<StatItem value="Anyone" label="Preference" />
 				</div>
 
-				<Button variant="ghost" className="mt-1.5" onClick={cancel}>
-					Cancel search
+				<Button asChild variant="ghost" className="mt-1.5">
+					<Link href={ROUTES.gender}>Cancel search</Link>
 				</Button>
 			</div>
 		</section>
