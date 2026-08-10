@@ -9,7 +9,7 @@ interface SessionResponse {
 
 export async function getServerSession(): Promise<ServerSession> {
 	const token = (await cookies()).get(SESSION_COOKIE)?.value;
-	if (!token) return { user: null, resolved: false };
+	if (!token) return { user: null, resolved: true };
 
 	const { data, error, responded } = await axios.get<SessionResponse>(
 		"/auth/me",

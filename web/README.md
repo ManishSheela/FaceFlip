@@ -21,11 +21,11 @@ handoff prototype intends.
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:5174
 ```
 
-> If port 3000 is taken, Next picks the next free port (e.g. 3001) — watch the
-> terminal output.
+> The dev server is pinned to port 5174. If it is already in use, Next exits
+> with an error — free the port or pass `-p` to override.
 
 ## Design system
 

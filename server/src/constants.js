@@ -1,5 +1,5 @@
 export const PORT = process.env.PORT || 4000;
-export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5174";
 
 export const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 export const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";

@@ -52,6 +52,7 @@ export default function CallPage() {
 	const [chatOpen, setChatOpen] = useState(false);
 	const [readCount, setReadCount] = useState(0);
 	const leavingRef = useRef(false);
+	const mountedRef = useRef(false);
 
 	const elapsed = useElapsedTimer();
 	const inCall = status === "matched" || status === "connected";
@@ -77,8 +78,17 @@ export default function CallPage() {
 	}, [inCall, endedReason, router]);
 
 	useEffect(() => {
+		const id = requestAnimationFrame(() => {
+			mountedRef.current = true;
+		});
+		return () => cancelAnimationFrame(id);
+	}, []);
+
+	useEffect(() => {
 		return () => {
-			if (!leavingRef.current && inCallRef.current) stop();
+			if (mountedRef.current && !leavingRef.current && inCallRef.current) {
+				stop();
+			}
 		};
 	}, [stop]);
 

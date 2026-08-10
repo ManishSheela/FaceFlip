@@ -45,6 +45,14 @@ export default function MatchingPage() {
 	statusRef.current = status;
 	const filtersRef = useRef(filters);
 	filtersRef.current = filters;
+	const mountedRef = useRef(false);
+
+	useEffect(() => {
+		const id = requestAnimationFrame(() => {
+			mountedRef.current = true;
+		});
+		return () => cancelAnimationFrame(id);
+	}, []);
 
 	useEffect(() => {
 		startSearching(filtersRef.current);
@@ -58,7 +66,7 @@ export default function MatchingPage() {
 
 	useEffect(() => {
 		return () => {
-			if (statusRef.current === "searching") stop();
+			if (mountedRef.current && statusRef.current === "searching") stop();
 		};
 	}, [stop]);
 

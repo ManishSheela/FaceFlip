@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { PhoneCall, PhoneOff } from "lucide-react";
 import { CHROMELESS_ROUTES, ROUTES } from "@/constants";
@@ -26,10 +26,15 @@ export function CallBanner() {
 		cancelCall,
 	} = useFaceFlip();
 
+	const wasActiveRef = useRef(false);
+
 	useEffect(() => {
-		if (status === "matched" || status === "connected") {
-			if (pathname !== ROUTES.call) router.push(ROUTES.call);
-		}
+		const active = status === "matched" || status === "connected";
+		const wasActive = wasActiveRef.current;
+		wasActiveRef.current = active;
+
+		if (!active || wasActive) return;
+		if (pathname !== ROUTES.call) router.push(ROUTES.call);
 	}, [status, pathname, router]);
 
 	if (CHROMELESS_ROUTES.includes(pathname)) return null;

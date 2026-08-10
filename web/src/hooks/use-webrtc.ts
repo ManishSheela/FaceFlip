@@ -25,24 +25,33 @@ export function useWebRtc({
 }: UseWebRtcOptions) {
 	const peerRef = useRef<RTCPeerConnection | null>(null);
 	const localStreamRef = useRef<MediaStream | null>(null);
+	const streamRequestRef = useRef<Promise<MediaStream> | null>(null);
 	const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 	const restartedRef = useRef(false);
 
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-	const [connectionState, setConnectionState] =
-		useState<RTCPeerConnectionState>("new");
 	const [audioEnabled, setAudioEnabled] = useState(true);
 	const [videoEnabled, setVideoEnabled] = useState(true);
 
 	const startLocalStream = useCallback(async () => {
 		if (localStreamRef.current) return localStreamRef.current;
+		if (streamRequestRef.current) return streamRequestRef.current;
 
-		const stream = await navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS);
-		localStreamRef.current = stream;
-		setLocalStream(stream);
-		setAudioEnabled(stream.getAudioTracks().some((t) => t.enabled));
-		setVideoEnabled(stream.getVideoTracks().some((t) => t.enabled));
-		return stream;
+		const request = (async () => {
+			const stream = await navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS);
+			localStreamRef.current = stream;
+			setLocalStream(stream);
+			setAudioEnabled(stream.getAudioTracks().some((t) => t.enabled));
+			setVideoEnabled(stream.getVideoTracks().some((t) => t.enabled));
+			return stream;
+		})();
+
+		streamRequestRef.current = request;
+		try {
+			return await request;
+		} finally {
+			streamRequestRef.current = null;
+		}
 	}, []);
 
 	const closePeer = useCallback(() => {
@@ -50,7 +59,6 @@ export function useWebRtc({
 		peerRef.current = null;
 		pendingCandidatesRef.current = [];
 		restartedRef.current = false;
-		setConnectionState("new");
 	}, []);
 
 	const stopLocalStream = useCallback(() => {
@@ -69,13 +77,6 @@ export function useWebRtc({
 		},
 		[socket],
 	);
-
-	const resetSignaling = useCallback(() => {
-		peerRef.current?.close();
-		peerRef.current = null;
-		pendingCandidatesRef.current = [];
-		restartedRef.current = false;
-	}, []);
 
 	const hasLocalStream = useCallback(() => localStreamRef.current !== null, []);
 
@@ -102,7 +103,6 @@ export function useWebRtc({
 
 			peer.onconnectionstatechange = () => {
 				if (peer !== peerRef.current) return;
-				setConnectionState(peer.connectionState);
 
 				if (peer.connectionState !== "failed") return;
 
@@ -217,7 +217,6 @@ export function useWebRtc({
 
 	return {
 		localStream,
-		connectionState,
 		audioEnabled,
 		videoEnabled,
 		startLocalStream,
@@ -229,7 +228,6 @@ export function useWebRtc({
 		toggleAudio,
 		toggleVideo,
 		closePeer,
-		resetSignaling,
 		hasLocalStream,
 	};
 }

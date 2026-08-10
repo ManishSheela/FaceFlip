@@ -109,10 +109,10 @@ cd web
 cp .env.local.example .env.local
 npm install
 npm run dev
-# → http://localhost:3000
+# → http://localhost:5174
 ```
 
-**Test the pairing:** open `http://localhost:3000/chat` in **two different
+**Test the pairing:** open `http://localhost:5174/chat` in **two different
 browser windows** (or one normal + one incognito), press **Start** in both.
 They'll match and connect. Press **Next** to re-pair.
 

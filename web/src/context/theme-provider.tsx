@@ -23,15 +23,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 	const [theme, setThemeState] = useState<Theme>("light");
 
 	useEffect(() => {
-		const stored = window.localStorage.getItem(
-			THEME_STORAGE_KEY,
-		) as Theme | null;
+		let stored: string | null = null;
+		try {
+			stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+		} catch {
+			stored = null;
+		}
 		if (stored === "dark" || stored === "light") setThemeState(stored);
 	}, []);
 
 	useEffect(() => {
 		document.documentElement.setAttribute("data-theme", theme);
-		window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+		try {
+			window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+		} catch {
+			return;
+		}
 	}, [theme]);
 
 	const setTheme = useCallback((next: Theme) => setThemeState(next), []);

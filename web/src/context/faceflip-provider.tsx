@@ -105,6 +105,8 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 	const [outgoingCall, setOutgoingCall] = useState<OutgoingCall | null>(null);
 
 	const roleRef = useRef<CallRole | null>(null);
+	const lastConnectedRef = useRef(false);
+	const wasSearchingRef = useRef(false);
 	const iceRef = useRef<RTCIceServer[]>([]);
 	const filtersRef = useRef<MatchFilters>({
 		gender: "other",
@@ -140,7 +142,6 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 		handleIceCandidate,
 		startLocalStream,
 		stopLocalStream,
-		resetSignaling,
 		hasLocalStream,
 	} = webrtc;
 
@@ -174,9 +175,39 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 		setPartner(null);
 	}, []);
 
+	const teardownSession = useCallback(() => {
+		closePeer();
+		stopLocalStream();
+		resetRoomState();
+		setSearch(EMPTY_SEARCH);
+		setMediaState("idle");
+		setMediaError(null);
+	}, [closePeer, resetRoomState, stopLocalStream]);
+
 	useEffect(() => {
 		if (connectionFailed) setError("server-unreachable");
 	}, [connectionFailed]);
+
+	useEffect(() => {
+		if (isConnected) return;
+		if (statusRef.current === "searching") wasSearchingRef.current = true;
+		searchSessionRef.current = false;
+		teardownSession();
+		setEndedReason(null);
+		setStatus("idle");
+	}, [isConnected, teardownSession]);
+
+	useEffect(() => {
+		const wasConnected = lastConnectedRef.current;
+		lastConnectedRef.current = isConnected;
+		if (!isConnected || wasConnected) return;
+		if (wasSearchingRef.current) {
+			wasSearchingRef.current = false;
+			searchSessionRef.current = true;
+			setError(null);
+			emit("match:find", filtersRef.current);
+		}
+	}, [isConnected, emit]);
 
 	useEffect(() => {
 		if (!isConnected) return;
@@ -188,7 +219,7 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 			}),
 
 			on<MatchFound>("match:found", (payload) => {
-				resetSignaling();
+				closePeer();
 				resetRoomState();
 
 				inRoomRef.current = true;
@@ -240,17 +271,14 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 
 			on<{ reason: string }>("match:ended", ({ reason }) => {
 				searchSessionRef.current = false;
-				closePeer();
-				resetRoomState();
+				teardownSession();
 				setEndedReason(reason ?? null);
 				setStatus("idle");
 			}),
 
 			on("match:cancelled", () => {
 				searchSessionRef.current = false;
-				closePeer();
-				resetRoomState();
-				setSearch(EMPTY_SEARCH);
+				teardownSession();
 				setStatus("idle");
 			}),
 
@@ -310,8 +338,8 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 		isConnected,
 		on,
 		emit,
+		teardownSession,
 		closePeer,
-		resetSignaling,
 		handleOffer,
 		handleAnswer,
 		handleIceCandidate,
@@ -359,6 +387,7 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 			}
 
 			searchSessionRef.current = true;
+			wasSearchingRef.current = false;
 			filtersRef.current = filters;
 			setError(null);
 			setEndedReason(null);
@@ -371,28 +400,24 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 	const skip = useCallback(
 		(filters: MatchFilters) => {
 			searchSessionRef.current = true;
+			wasSearchingRef.current = false;
 			filtersRef.current = filters;
-			closePeer();
-			resetRoomState();
+			teardownSession();
 			setEndedReason(null);
 			setStatus("searching");
 			emit("match:skip", filters);
 		},
-		[closePeer, emit, resetRoomState],
+		[teardownSession, emit],
 	);
 
 	const stop = useCallback(() => {
 		searchSessionRef.current = false;
+		wasSearchingRef.current = false;
 		emit("match:cancel");
-		closePeer();
-		stopLocalStream();
-		resetRoomState();
-		setSearch(EMPTY_SEARCH);
+		teardownSession();
 		setEndedReason(null);
-		setMediaState("idle");
-		setMediaError(null);
 		setStatus("idle");
-	}, [closePeer, emit, resetRoomState, stopLocalStream]);
+	}, [emit, teardownSession]);
 
 	const sendMessage = useCallback(
 		(text: string) => {
