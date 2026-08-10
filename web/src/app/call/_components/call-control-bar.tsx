@@ -14,6 +14,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tag } from "@/components/blueprint/tag";
+import type { FriendRequestState } from "@/types";
+
+const FRIEND_LABELS: Record<string, string> = {
+  sending: "Sending…",
+  sent: "Request sent",
+  "already-pending": "Request pending",
+  "already-friends": "Already friends",
+  "auto-accepted": "Friends!",
+  accepted: "Friends!",
+  error: "Couldn't send",
+};
 
 interface CallControlBarProps {
   micOn: boolean;
@@ -22,6 +33,8 @@ interface CallControlBarProps {
   isFriendCall: boolean;
   chatOpen?: boolean;
   unreadCount?: number;
+  canAddFriend?: boolean;
+  friendRequestState?: FriendRequestState | null;
   onToggleChat?: () => void;
   onToggleMic: () => void;
   onToggleCam: () => void;
@@ -42,6 +55,8 @@ export function CallControlBar({
   isFriendCall,
   chatOpen,
   unreadCount = 0,
+  canAddFriend = false,
+  friendRequestState = null,
   onToggleChat,
   onToggleMic,
   onToggleCam,
@@ -100,16 +115,21 @@ export function CallControlBar({
         </Button>
       )}
 
-      {!isFriendCall && (
-        <Button
-          variant="glass"
-          size="icon"
-          onClick={onAddFriend}
-          title="Add as friend"
-        >
-          <UserPlus className="h-4 w-4" strokeWidth={1.5} />
-        </Button>
-      )}
+      {canAddFriend &&
+        (friendRequestState ? (
+          <Tag variant="neutral" className="self-center backdrop-blur-sm">
+            {FRIEND_LABELS[friendRequestState] ?? "Request sent"}
+          </Tag>
+        ) : (
+          <Button
+            variant="glass"
+            size="icon"
+            onClick={onAddFriend}
+            title="Add as friend"
+          >
+            <UserPlus className="h-4 w-4" strokeWidth={1.5} />
+          </Button>
+        ))}
 
       <Button variant="danger" size="icon" onClick={onEnd} title="End call">
         <PhoneOff {...ICON_PROPS} />

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ROUTES, USER_GENDER_OPTIONS } from "@/constants";
+import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
@@ -11,9 +13,18 @@ import { CenteredScreen } from "@/components/layout/centered-screen";
 import type { UserGender } from "@/types";
 
 export default function OnboardingPage() {
+	const router = useRouter();
+	const { isAuthenticated, userGender } = useSession();
+	const { setUserGender } = useSessionActions();
 	const [selectedGender, setSelectedGender] = useState<UserGender | null>(
-		null,
+		userGender,
 	);
+
+	const handleContinue = () => {
+		if (!selectedGender) return;
+		setUserGender(selectedGender);
+		router.push(isAuthenticated ? ROUTES.gender : ROUTES.matching);
+	};
 
 	return (
 		<CenteredScreen maxWidth={440}>
@@ -46,14 +57,14 @@ export default function OnboardingPage() {
 				</div>
 
 				<Button
-					asChild
 					variant="primary"
 					blueprint
 					block
 					size="lg"
 					disabled={!selectedGender}
+					onClick={handleContinue}
 				>
-					<Link href={ROUTES.matching}>Continue</Link>
+					Continue
 				</Button>
 
 				<div className="flex items-center border-t border-divider pt-1.5">

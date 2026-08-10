@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
+import { loadAgeConfirmed, saveAgeConfirmed } from "@/lib/utils";
+import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { ToggleRow } from "@/components/blueprint/toggle-row";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 
 export function AgeGate() {
+	const router = useRouter();
+	const { isAuthenticated } = useSession();
 	const [ageConfirmed, setAgeConfirmed] = useState(false);
+
+	useEffect(() => {
+		setAgeConfirmed(loadAgeConfirmed());
+	}, []);
+
+	const confirm = (checked: boolean) => {
+		setAgeConfirmed(checked);
+		saveAgeConfirmed(checked);
+	};
 
 	return (
 		<div className="flex w-full max-w-[440px] flex-col gap-3.5">
@@ -17,19 +30,21 @@ export function AgeGate() {
 					title="I confirm that I am 18 years of age or older"
 					description="You must be an adult to use FaceFliip."
 					checked={ageConfirmed}
-					onCheckedChange={setAgeConfirmed}
+					onCheckedChange={confirm}
 				/>
 			</BlueprintFrame>
 
 			<Button
-				asChild
 				variant="primary"
 				blueprint
 				block
 				className="h-auto px-10 py-3.5 text-base"
 				disabled={!ageConfirmed}
+				onClick={() =>
+					router.push(isAuthenticated ? ROUTES.matching : ROUTES.auth)
+				}
 			>
-				<Link href={ROUTES.auth}>Start Chatting</Link>
+				Start Chatting
 			</Button>
 		</div>
 	);

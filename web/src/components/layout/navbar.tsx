@@ -1,45 +1,90 @@
 "use client";
 
-import Link from "next/link";
-import { Moon } from "lucide-react";
-import { APP_NAME, GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
+import { usePathname, useRouter } from "next/navigation";
+import { Moon, Sun } from "lucide-react";
+import {
+	APP_NAME,
+	CHROMELESS_ROUTES,
+	GENDER_PREF_OPTIONS,
+	ROUTES,
+} from "@/constants";
+import { useFaceFlip } from "@/hooks/use-faceflip";
+import { useSession, useSessionActions } from "@/hooks/use-session";
+import { useTheme } from "@/hooks/use-theme";
+import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
-
+import { Tag } from "@/components/blueprint/tag";
 export function Navbar() {
+	const router = useRouter();
+	const pathname = usePathname();
+	const { theme, toggleTheme } = useTheme();
+	const { isAuthenticated, genderPref, profileName } = useSession();
+	const { setGenderPref } = useSessionActions();
+	const { incomingRequests } = useFaceFlip();
+
+	if (CHROMELESS_ROUTES.includes(pathname)) return null;
+
+	const pendingCount = incomingRequests.length;
+
 	return (
 		<header className="nav sticky top-0 z-30 flex items-center gap-3.5 border-b border-divider bg-bg px-3.5 py-2.5">
-			<Link
-				href={ROUTES.landing}
+			<button
+				type="button"
+				onClick={() => router.push(ROUTES.landing)}
 				className="mr-auto cursor-pointer font-heading text-lg font-semibold"
 			>
 				{APP_NAME}
-			</Link>
+			</button>
 
-			<Button asChild variant="ghost" size="sm" className="px-2">
-				<Link href={ROUTES.friends}>Friends</Link>
+			<Button
+				variant="ghost"
+				size="sm"
+				className="px-2"
+				onClick={() => router.push(ROUTES.friends)}
+			>
+				Friends
+				{pendingCount > 0 && (
+					<Tag variant="accent" className="ml-1 px-1.5 py-0.5 text-[11px]">
+						{pendingCount}
+					</Tag>
+				)}
 			</Button>
 
-			<SegmentedControl
-				aria-label="Match preference"
-				options={GENDER_PREF_OPTIONS}
-				value="random"
-				onValueChange={() => {}}
-				className="hidden sm:inline-flex"
-			/>
+			{isAuthenticated && (
+				<SegmentedControl
+					aria-label="Match preference"
+					options={GENDER_PREF_OPTIONS}
+					value={genderPref}
+					onValueChange={setGenderPref}
+					className="hidden sm:inline-flex"
+				/>
+			)}
 
-			<Link
-				href={ROUTES.settings}
-				className="flex cursor-pointer items-center gap-1.5 border border-divider py-1 pl-1 pr-2.5"
+			{isAuthenticated && (
+				<button
+					type="button"
+					onClick={() => router.push(ROUTES.settings)}
+					className="flex cursor-pointer items-center gap-1.5 border border-divider py-1 pl-1 pr-2.5"
+				>
+					<span className="flex h-7 w-7 items-center justify-center bg-accent-100 font-heading text-[11px] text-accent-800">
+						{getInitials(profileName)}
+					</span>
+					<span className="text-[13px] font-medium">{profileName}</span>
+				</button>
+			)}
+
+			<Button
+				variant="secondary"
+				size="icon"
+				aria-label="Toggle theme"
+				onClick={toggleTheme}
 			>
-				<span className="flex h-7 w-7 items-center justify-center bg-accent-100 font-heading text-[11px] text-accent-800">
-					GU
-				</span>
-				<span className="text-[13px] font-medium">Guest</span>
-			</Link>
-
-			<Button variant="secondary" size="icon" aria-label="Toggle theme">
-				<Moon className="h-[15px] w-[15px]" strokeWidth={1.5} />
+				{theme === "dark" ? (
+					<Sun className="h-[15px] w-[15px]" strokeWidth={1.5} />
+				) : (
+					<Moon className="h-[15px] w-[15px]" strokeWidth={1.5} />
+				)}
 			</Button>
 		</header>
 	);

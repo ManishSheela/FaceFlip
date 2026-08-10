@@ -2,7 +2,9 @@ import type {
 	DeviceOption,
 	FeatureCard,
 	GenderPref,
+	GenderPreference,
 	MatchErrorCode,
+	SocketGender,
 	ReportReason,
 	Theme,
 	UserGender,
@@ -51,7 +53,27 @@ export const MATCH_ERROR_MESSAGES: Record<MatchErrorCode, string> = {
 		"Can't reach the matching server. Check your connection and try again.",
 	"connection-failed":
 		"The connection to your match dropped. Search again to find someone new.",
-	"partner-left": "Your match disconnected.",
+};
+
+export const MATCH_END_MESSAGES: Record<string, string> = {
+	"partner-left": "Your match left.",
+	"partner-skipped": "Your match moved on.",
+	"partner-disconnected": "Your match disconnected.",
+	blocked: "You blocked this user.",
+};
+
+export const MEDIA_CONSTRAINTS_FACING = "user";
+
+export const GENDER_TO_SOCKET: Record<UserGender, SocketGender> = {
+	male: "male",
+	female: "female",
+	random: "other",
+};
+
+export const PREF_TO_SOCKET: Record<GenderPref, GenderPreference> = {
+	male: "male",
+	female: "female",
+	random: "any",
 };
 
 export const FEATURE_CARDS: FeatureCard[] = [
@@ -135,8 +157,14 @@ export const REMOTE_GRADIENT =
 export const LOCAL_GRADIENT =
   "linear-gradient(225deg, var(--color-accent-800), var(--color-accent-900), var(--color-accent-700))";
 
-export const GENDER_COLORS: Record<UserGender, string> = {
+export const GENDER_COLORS: Record<SocketGender, string> = {
   male: "#3b82f6",
   female: "#ec4899",
-  random: "#eab308",
+  other: "#eab308",
+};
+
+export const GENDER_BADGE_LABELS: Record<SocketGender, string> = {
+  male: "Male",
+  female: "Female",
+  other: "Unspecified",
 };

@@ -4,12 +4,12 @@ import { useEffect, useRef } from "react";
 import { Loader2, MicOff, VideoOff } from "lucide-react";
 import { Tag } from "@/components/blueprint/tag";
 import { LOCAL_GRADIENT, REMOTE_GRADIENT } from "@/constants";
-import type { PartnerMedia, UserGender } from "@/types";
+import type { PartnerMedia, SocketGender } from "@/types";
 import { GenderBadge } from "./gender-badge";
 
 interface VideoCallPanelsProps {
   targetName: string;
-  targetGender: UserGender | null;
+  targetGender: SocketGender | null;
   connected: boolean;
   timeLabel: string;
   camOn: boolean;

@@ -17,9 +17,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 interface ReportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmit?: (reason: ReportReason, details?: string) => void;
 }
 
-export function ReportDialog({ open, onOpenChange }: ReportDialogProps) {
+export function ReportDialog({ open, onOpenChange, onSubmit }: ReportDialogProps) {
   const [reason, setReason] = useState<ReportReason | "">("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -74,7 +75,10 @@ export function ReportDialog({ open, onOpenChange }: ReportDialogProps) {
               <Button
                 variant="primary"
                 disabled={!reason}
-                onClick={() => setSubmitted(true)}
+                onClick={() => {
+                  if (reason) onSubmit?.(reason);
+                  setSubmitted(true);
+                }}
               >
                 Submit
               </Button>

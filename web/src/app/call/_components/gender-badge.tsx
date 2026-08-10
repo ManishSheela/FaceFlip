@@ -1,9 +1,9 @@
 import { MarsStroke } from "lucide-react";
-import { GENDER_COLORS } from "@/constants";
-import type { UserGender } from "@/types";
+import { GENDER_BADGE_LABELS, GENDER_COLORS } from "@/constants";
+import type { SocketGender } from "@/types";
 
 type GenderBadgeProps = {
-  gender: UserGender;
+  gender: SocketGender;
 };
 
 export function GenderBadge({ gender }: GenderBadgeProps) {
@@ -19,7 +19,7 @@ export function GenderBadge({ gender }: GenderBadgeProps) {
       }}
     >
       <MarsStroke className="h-3.5 w-3.5" />
-      <span className="capitalize">{gender}</span>
+      <span>{GENDER_BADGE_LABELS[gender]}</span>
     </span>
   );
 }

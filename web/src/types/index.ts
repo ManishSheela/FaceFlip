@@ -53,38 +53,48 @@ export interface ServerSession {
 	resolved: boolean;
 }
 
-export type MatchStatus =
-	| "idle"
-	| "preparing"
-	| "searching"
-	| "matched"
-	| "connected"
-	| "ended";
+export type SocketGender = "male" | "female" | "other";
+
+export type GenderPreference = "male" | "female" | "any";
+
+export type MatchStatus = "idle" | "searching" | "matched" | "connected";
+
+export type MediaState = "idle" | "requesting" | "ready" | "error";
+
+export type MatchSource = "random" | "friend";
+
+export type CallRole = "initiator" | "responder";
 
 export type MatchErrorCode =
 	| "media-denied"
 	| "media-unavailable"
 	| "server-unreachable"
-	| "connection-failed"
-	| "partner-left";
+	| "connection-failed";
+
+export interface MatchFilters {
+	gender: SocketGender;
+	preferGender: GenderPreference;
+}
 
 export interface PartnerProfile {
 	name: string | null;
-	gender: UserGender | null;
+	gender: SocketGender | null;
+	isGuest: boolean;
 }
 
-export interface MatchInfo {
+export interface MatchFound {
 	roomId: string;
+	role: CallRole;
 	partnerId: string;
 	partner: PartnerProfile;
-	initiator: boolean;
+	source: MatchSource;
+	iceServers: RTCIceServer[];
 }
 
-export interface QueueStats {
-	waiting: number;
-	active: number;
-	online: number;
+export interface SearchStatus {
 	position: number;
+	waiting: number;
+	online: number;
 }
 
 export interface StrangerMessage {
@@ -101,6 +111,38 @@ export interface PartnerMedia {
 
 export type MediaKind = keyof PartnerMedia;
 
-export type SignalData =
-	| { kind: "description"; description: RTCSessionDescriptionInit }
-	| { kind: "candidate"; candidate: RTCIceCandidateInit };
+export interface SocketFriend {
+	userId: string;
+	name: string;
+	picture: string | null;
+	online: boolean;
+}
+
+export interface IncomingFriendRequest {
+	id: string;
+	fromUserId: string;
+	name: string | null;
+	picture?: string | null;
+}
+
+export interface IncomingCall {
+	fromUserId: string;
+	name: string | null;
+}
+
+export type OutgoingCallStatus = "calling" | "ringing" | "rejected" | "error";
+
+export interface OutgoingCall {
+	friendUserId: string | null;
+	status: OutgoingCallStatus;
+	reason?: string;
+}
+
+export type FriendRequestState =
+	| "sending"
+	| "sent"
+	| "already-friends"
+	| "already-pending"
+	| "auto-accepted"
+	| "accepted"
+	| "error";

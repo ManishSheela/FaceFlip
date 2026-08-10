@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProviders } from "@/context/app-providers";
 import { Navbar } from "@/components/layout/navbar";
-import { APP_NAME } from "@/constants";
+import { CallBanner } from "@/components/layout/call-banner";
+import { getServerSession } from "@/lib/server-session";
+import { APP_NAME, THEME_STORAGE_KEY } from "@/constants";
 
 export const metadata: Metadata = {
 	title: `${APP_NAME} — Every flip, a new face`,
@@ -9,18 +12,35 @@ export const metadata: Metadata = {
 		"Spontaneous video calls with real people. No scripts, no profiles — just genuine moments.",
 };
 
-export default function RootLayout({
+const themeScript = `
+(function () {
+  try {
+    var t = localStorage.getItem('${THEME_STORAGE_KEY}');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  } catch (e) {}
+})();
+`;
+
+export default async function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	const initialSession = await getServerSession();
+
 	return (
-		<html lang="en" data-theme="light">
+		<html lang="en" data-theme="light" suppressHydrationWarning>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+			</head>
 			<body>
-				<div className="flex min-h-screen flex-col bg-bg text-text">
-					<Navbar />
-					<main className="flex flex-1 flex-col">{children}</main>
-				</div>
+				<AppProviders initialSession={initialSession}>
+					<div className="flex min-h-screen flex-col bg-bg text-text">
+						<Navbar />
+						<CallBanner />
+						<main className="flex flex-1 flex-col">{children}</main>
+					</div>
+				</AppProviders>
 			</body>
 		</html>
 	);

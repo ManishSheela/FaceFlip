@@ -1,12 +1,38 @@
+"use client";
+
+import { Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, User } from "lucide-react";
-import { ROUTES } from "@/constants";
+import { AUTH_ERROR_MESSAGES, ROUTES } from "@/constants";
+import { useSessionActions } from "@/hooks/use-session";
+import { startGoogleLogin } from "@/lib/api-service";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import { GoogleIcon } from "@/components/icons/google-icon";
 
 export default function AuthPage() {
+	return (
+		<Suspense fallback={null}>
+			<Auth />
+		</Suspense>
+	);
+}
+
+function Auth() {
+	const router = useRouter();
+	const { signOut } = useSessionActions();
+	const errorCode = useSearchParams().get("error");
+	const error = errorCode
+		? (AUTH_ERROR_MESSAGES[errorCode] ?? AUTH_ERROR_MESSAGES.failed)
+		: null;
+
+	const continueAsGuest = async () => {
+		await signOut();
+		router.push(ROUTES.onboarding);
+	};
+
 	return (
 		<CenteredScreen maxWidth={440}>
 			<BlueprintFrame className="flex flex-col gap-[17px] p-5 shadow-elev-md">
@@ -23,10 +49,13 @@ export default function AuthPage() {
 						blueprint
 						block
 						className="h-[52px] justify-start gap-3 px-3.5"
+						onClick={startGoogleLogin}
 					>
 						<GoogleIcon />
 						Continue with Google
 					</Button>
+
+					{error && <p className="m-0 text-xs text-[#c0392b]">{error}</p>}
 
 					<div className="flex items-center gap-2.5">
 						<div className="h-px flex-1 bg-divider" />
@@ -36,11 +65,14 @@ export default function AuthPage() {
 						<div className="h-px flex-1 bg-divider" />
 					</div>
 
-					<Button asChild variant="secondary" block className="h-[52px] justify-start gap-3 px-3.5">
-						<Link href={ROUTES.onboarding}>
-							<User className="h-[18px] w-[18px]" strokeWidth={1.5} />
-							Continue as Guest
-						</Link>
+					<Button
+						variant="secondary"
+						block
+						className="h-[52px] justify-start gap-3 px-3.5"
+						onClick={continueAsGuest}
+					>
+						<User className="h-[18px] w-[18px]" strokeWidth={1.5} />
+						Continue as Guest
 					</Button>
 				</div>
 

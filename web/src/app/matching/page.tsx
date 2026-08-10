@@ -1,6 +1,19 @@
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { ROUTES } from "@/constants";
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle, Search } from "lucide-react";
+import {
+	GENDER_PREF_LABELS,
+	MATCH_END_MESSAGES,
+	MATCH_ERROR_MESSAGES,
+	ROUTES,
+} from "@/constants";
+import { useSession } from "@/hooks/use-session";
+import { useFaceFlip } from "@/hooks/use-faceflip";
+import { useMatchFilters } from "@/hooks/use-match-filters";
+import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
+import { formatDuration } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tag } from "@/components/blueprint/tag";
 import { RadarRings } from "@/components/blueprint/radar-rings";
@@ -13,14 +26,61 @@ const TARGET_CORNERS = [
 	"bottom-[-5px] right-[-5px] border-b border-r",
 ] as const;
 
+const STATUS_LABELS: Record<string, string> = {
+	idle: "READY TO SCAN",
+	searching: "SCANNING GLOBAL NETWORK",
+	matched: "MATCH FOUND",
+	connected: "MATCH FOUND",
+};
+
 export default function MatchingPage() {
+	const router = useRouter();
+	const { isAuthenticated, genderPref } = useSession();
+	const filters = useMatchFilters();
+	const { status, error, endedReason, search, startSearching, stop } =
+		useFaceFlip();
+	const elapsed = useElapsedTimer();
+
+	const statusRef = useRef(status);
+	statusRef.current = status;
+	const filtersRef = useRef(filters);
+	filtersRef.current = filters;
+
+	useEffect(() => {
+		startSearching(filtersRef.current);
+	}, [startSearching]);
+
+	useEffect(() => {
+		if (status === "matched" || status === "connected") {
+			router.push(ROUTES.call);
+		}
+	}, [status, router]);
+
+	useEffect(() => {
+		return () => {
+			if (statusRef.current === "searching") stop();
+		};
+	}, [stop]);
+
+	const cancel = () => {
+		stop();
+		router.push(isAuthenticated ? ROUTES.gender : ROUTES.auth);
+	};
+
+	const searching = status === "searching";
+	const notice = error
+		? MATCH_ERROR_MESSAGES[error]
+		: endedReason
+			? MATCH_END_MESSAGES[endedReason]
+			: null;
+
 	return (
 		<section className="relative flex flex-1 animate-fade-slide-in flex-col items-center justify-center overflow-hidden p-5">
 			<div className="grid-overlay pointer-events-none absolute inset-0" />
 
 			<div className="relative z-10 flex flex-col items-center gap-[17px]">
 				<Tag variant="outline" className="text-[11px] tracking-[0.1em]">
-					SCANNING GLOBAL NETWORK
+					{STATUS_LABELS[status] ?? STATUS_LABELS.idle}
 				</Tag>
 
 				<RadarRings size={200}>
@@ -42,10 +102,14 @@ export default function MatchingPage() {
 				</RadarRings>
 
 				<div className="flex flex-col items-center gap-1.5">
-					<h3 className="m-0 text-xl">Finding your match</h3>
+					<h3 className="m-0 text-xl">
+						{searching && search.waiting <= 1
+							? "Waiting for someone to join"
+							: "Finding your match"}
+					</h3>
 					<div className="mt-1 flex flex-col items-center gap-0.5">
 						<span className="font-heading text-[26px] tracking-[0.06em] text-accent">
-							00:00
+							{formatDuration(elapsed)}
 						</span>
 						<span className="text-muted text-[10px] uppercase tracking-[0.08em]">
 							Elapsed
@@ -53,17 +117,41 @@ export default function MatchingPage() {
 					</div>
 				</div>
 
+				{notice && (
+					<div className="flex max-w-[420px] items-start gap-2 border border-divider px-3.5 py-2.5 text-left">
+						<AlertTriangle
+							className="mt-0.5 h-4 w-4 flex-none text-accent"
+							strokeWidth={1.5}
+						/>
+						<p className="m-0 text-xs">{notice}</p>
+					</div>
+				)}
+
 				<div className="flex items-stretch gap-8 border border-divider px-8 py-3.5">
-					<StatItem value="12,847" label="Online" />
+					<StatItem value={String(search.online)} label="Online" />
 					<div className="w-px bg-divider" />
-					<StatItem value="#1" label="Queue spot" />
+					<StatItem
+						value={search.position > 0 ? `#${search.position}` : "—"}
+						label="Queue spot"
+					/>
 					<div className="w-px bg-divider" />
-					<StatItem value="Anyone" label="Preference" />
+					<StatItem value={GENDER_PREF_LABELS[genderPref]} label="Preference" />
 				</div>
 
-				<Button asChild variant="ghost" className="mt-1.5">
-					<Link href={ROUTES.gender}>Cancel search</Link>
-				</Button>
+				<div className="mt-1.5 flex items-center gap-2.5">
+					{error && (
+						<Button
+							variant="primary"
+							blueprint
+							onClick={() => startSearching(filtersRef.current)}
+						>
+							Try again
+						</Button>
+					)}
+					<Button variant="ghost" onClick={cancel}>
+						Cancel search
+					</Button>
+				</div>
 			</div>
 		</section>
 	);
