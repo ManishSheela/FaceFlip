@@ -24,7 +24,7 @@ export function SectionCard({
   bodyClassName,
 }: SectionCardProps) {
   return (
-    <BlueprintFrame className={cn("bg-transparent shadow-elev-sm", className)}>
+    <BlueprintFrame className={cn("shadow-elev-sm", className)}>
       <div className="flex items-center gap-2 border-b border-divider px-4 py-2.5">
         {icon && <span className="text-accent">{icon}</span>}
         <span className="card-kicker">{kicker}</span>

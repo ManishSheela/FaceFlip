@@ -32,7 +32,7 @@ export default function FriendsPage() {
 	if (!isAuthenticated) {
 		return (
 			<section className="mx-auto flex w-full max-w-[680px] animate-fade-slide-in flex-col gap-[17px] px-3.5 pb-10 pt-5">
-				<div className="flex items-center justify-between">
+				<div className="flex flex-wrap items-center justify-between gap-2">
 					<h2 className="m-0">Friends</h2>
 					<Button asChild variant="ghost">
 						<Link href={ROUTES.landing}>
@@ -45,7 +45,7 @@ export default function FriendsPage() {
 					<p className="text-muted m-0 text-sm">
 						Sign in to add friends and call them directly.
 					</p>
-					<Button asChild variant="primary" blueprint>
+					<Button asChild variant="primary">
 						<Link href={ROUTES.auth}>Sign in</Link>
 					</Button>
 				</BlueprintFrame>

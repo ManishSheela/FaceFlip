@@ -18,8 +18,6 @@ export const THEME_STORAGE_KEY = "faceflip-theme";
 
 export const AGE_CONFIRMED_STORAGE_KEY = "faceflip-age-confirmed";
 
-export const BLUEPRINT_CORNERS = ["tl", "tr", "bl", "br"] as const;
-
 export const API_URL =
 	process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
@@ -92,6 +90,18 @@ export const FEATURE_CARDS: FeatureCard[] = [
 		title: "No signup",
 		body: "Jump in as a guest, no account needed.",
 	},
+	{
+		kicker: "Premium",
+		title: "Unlock filters",
+		body: "Gender, HD video, ad-free calls.",
+		premium: true,
+	},
+];
+
+export const LANDING_STATS: { value: string; label: string }[] = [
+	{ value: "18,204", label: "Online now" },
+	{ value: "4.2M+", label: "Flips today" },
+	{ value: "190+", label: "Countries" },
 ];
 
 export const GENDER_PREF_LABELS: Record<GenderPref, string> = {
@@ -109,6 +119,14 @@ export const USER_GENDER_OPTIONS: { label: string; value: UserGender }[] = [
 	{ label: "Female", value: "female" },
 	{ label: "Random", value: "random" },
 ];
+
+export const VIDEO_QUALITY_OPTIONS = [
+	{ value: "saver", label: "Data saver", sub: "Low bandwidth", locked: false },
+	{ value: "standard", label: "Standard", sub: "Recommended", locked: false },
+	{ value: "hd", label: "HD", sub: "Premium only", locked: true },
+] as const;
+
+export type VideoQuality = (typeof VIDEO_QUALITY_OPTIONS)[number]["value"];
 
 export const THEME_OPTIONS: { label: string; value: Theme }[] = [
 	{ label: "Light", value: "light" },
@@ -151,11 +169,6 @@ export const MICROPHONE_DEVICES: DeviceOption[] = [
 	{ label: "Built-in microphone", value: "Built-in microphone" },
 	{ label: "Headset mic", value: "Headset mic" },
 ];
-
-export const REMOTE_GRADIENT =
-  "linear-gradient(135deg, var(--color-accent-900), var(--color-accent-700), var(--color-accent-800))";
-export const LOCAL_GRADIENT =
-  "linear-gradient(225deg, var(--color-accent-800), var(--color-accent-900), var(--color-accent-700))";
 
 export const GENDER_COLORS: Record<SocketGender, string> = {
   male: "#3b82f6",

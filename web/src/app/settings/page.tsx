@@ -69,7 +69,7 @@ function Settings() {
 
 	return (
 		<section className="mx-auto flex w-full max-w-[720px] animate-fade-slide-in flex-col gap-[17px] px-3.5 pb-16 pt-5">
-			<div className="flex items-center justify-between border-b border-divider pb-3.5">
+			<div className="flex flex-wrap items-center justify-between gap-3 border-b border-divider pb-3.5">
 				<div>
 					<h2 className="m-0 mb-0.5">Settings</h2>
 					<p className="text-muted m-0 text-[13px]">
@@ -128,7 +128,6 @@ function Settings() {
 						</p>
 						<Button
 							variant="primary"
-							blueprint
 							className="gap-1.5"
 							onClick={startGoogleLogin}
 						>

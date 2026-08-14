@@ -11,4 +11,4 @@ export const ROUTES = {
 	settings: "/settings",
 } as const;
 
-export const CHROMELESS_ROUTES: string[] = [ROUTES.call];
+export const CHROMELESS_ROUTES: string[] = [ROUTES.call, ROUTES.matching];

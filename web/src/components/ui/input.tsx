@@ -12,7 +12,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         type={type}
         className={cn(
-          "w-full min-h-9 rounded-none border border-divider bg-surface px-2.5 py-1.5 text-sm text-text caret-accent",
+          "w-full min-h-9 rounded-md border border-divider bg-surface px-2.5 py-1.5 text-sm text-text caret-accent",
           "transition-colors placeholder:text-muted",
           "hover:border-[color-mix(in_srgb,var(--color-text)_45%,transparent)]",
           "focus-visible:border-accent focus-visible:outline-none",

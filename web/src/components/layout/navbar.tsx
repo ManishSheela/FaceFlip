@@ -1,26 +1,23 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Moon, Sun } from "lucide-react";
-import {
-	APP_NAME,
-	CHROMELESS_ROUTES,
-	GENDER_PREF_OPTIONS,
-	ROUTES,
-} from "@/constants";
+import { Moon, Sun, Users } from "lucide-react";
+import { APP_NAME, CHROMELESS_ROUTES, ROUTES } from "@/constants";
 import { useFaceFlip } from "@/hooks/use-faceflip";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { SegmentedControl } from "@/components/blueprint/segmented-control";
-import { Tag } from "@/components/blueprint/tag";
+import { LogoMark } from "@/components/icons/logo-mark";
+
+const NAV_ICON_BUTTON =
+	"relative flex h-[34px] w-[34px] flex-none cursor-pointer items-center justify-center rounded-[9px] border border-divider bg-surface transition-colors hover:bg-neutral-100";
+
 export function Navbar() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { theme, toggleTheme } = useTheme();
-	const { isAuthenticated, genderPref, profileName } = useSession();
-	const { setGenderPref } = useSessionActions();
+	const { isAuthenticated, profileName } = useSession();
+	const { signOut } = useSessionActions();
 	const { incomingRequests } = useFaceFlip();
 
 	if (CHROMELESS_ROUTES.includes(pathname)) return null;
@@ -28,64 +25,84 @@ export function Navbar() {
 	const pendingCount = incomingRequests.length;
 
 	return (
-		<header className="nav sticky top-0 z-30 flex items-center gap-3.5 border-b border-divider bg-bg px-3.5 py-2.5">
+		<header className="sticky top-0 z-30 flex h-14 flex-none items-center justify-between gap-2 bg-surface px-4 shadow-[0_1px_0_var(--color-divider),0_4px_20px_color-mix(in_srgb,var(--color-accent)_6%,transparent)] sm:px-8">
 			<button
 				type="button"
 				onClick={() => router.push(ROUTES.landing)}
-				className="mr-auto cursor-pointer font-heading text-lg font-semibold"
+				className="flex flex-none cursor-pointer items-center gap-3"
 			>
-				{APP_NAME}
+				<span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-accent text-white shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-accent)_20%,transparent)]">
+					<LogoMark />
+				</span>
+				<span className="flex flex-col items-start leading-none">
+					<span className="font-heading text-[17px] font-black leading-none tracking-[-0.02em]">
+						{APP_NAME}
+					</span>
+					<span className="font-heading text-[9px] uppercase leading-none tracking-[0.1em] text-accent">
+						Video chat
+					</span>
+				</span>
 			</button>
 
-			<Button
-				variant="ghost"
-				size="sm"
-				className="px-2"
-				onClick={() => router.push(ROUTES.friends)}
-			>
-				Friends
-				{pendingCount > 0 && (
-					<Tag variant="accent" className="ml-1 px-1.5 py-0.5 text-[11px]">
-						{pendingCount}
-					</Tag>
-				)}
-			</Button>
-
-			{isAuthenticated && (
-				<SegmentedControl
-					aria-label="Match preference"
-					options={GENDER_PREF_OPTIONS}
-					value={genderPref}
-					onValueChange={setGenderPref}
-					className="hidden sm:inline-flex"
-				/>
-			)}
-
-			{isAuthenticated && (
+			<div className="flex flex-none items-center gap-2">
 				<button
 					type="button"
-					onClick={() => router.push(ROUTES.settings)}
-					className="flex cursor-pointer items-center gap-1.5 border border-divider py-1 pl-1 pr-2.5"
+					aria-label="Friends"
+					title="Friends"
+					onClick={() => router.push(ROUTES.friends)}
+					className={NAV_ICON_BUTTON}
 				>
-					<span className="flex h-7 w-7 items-center justify-center bg-accent-100 font-heading text-[11px] text-accent-800">
-						{getInitials(profileName)}
-					</span>
-					<span className="text-[13px] font-medium">{profileName}</span>
+					<Users className="h-[15px] w-[15px]" strokeWidth={1.5} />
+					{pendingCount > 0 && (
+						<span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-on-accent">
+							{pendingCount}
+						</span>
+					)}
 				</button>
-			)}
 
-			<Button
-				variant="secondary"
-				size="icon"
-				aria-label="Toggle theme"
-				onClick={toggleTheme}
-			>
-				{theme === "dark" ? (
-					<Sun className="h-[15px] w-[15px]" strokeWidth={1.5} />
-				) : (
-					<Moon className="h-[15px] w-[15px]" strokeWidth={1.5} />
+				<button
+					type="button"
+					aria-label="Toggle theme"
+					onClick={toggleTheme}
+					className={NAV_ICON_BUTTON}
+				>
+					{theme === "dark" ? (
+						<Sun className="h-[15px] w-[15px]" strokeWidth={1.5} />
+					) : (
+						<Moon className="h-[15px] w-[15px]" strokeWidth={1.5} />
+					)}
+				</button>
+
+				{isAuthenticated && (
+					<>
+						<button
+							type="button"
+							onClick={() => router.push(ROUTES.settings)}
+							className="flex flex-none cursor-pointer items-center gap-2 overflow-hidden rounded-3xl border border-divider bg-surface py-[5px] pl-[6px] pr-[6px] sm:pr-3"
+						>
+							<span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-gradient-to-br from-accent to-[oklch(0.45_0.1_270)] font-heading text-[11px] font-black text-white">
+								{getInitials(profileName)}
+							</span>
+							<span className="hidden text-xs font-semibold sm:inline">
+								{profileName}
+							</span>
+						</button>
+
+						<button
+							type="button"
+							onClick={() => void signOut()}
+							className="hidden flex-none cursor-pointer rounded-[9px] border px-[13px] py-[7px] text-[11px] font-semibold sm:block"
+							style={{
+								borderColor: "oklch(0.65 0.1 25 / 0.3)",
+								background: "oklch(0.65 0.1 25 / 0.06)",
+								color: "oklch(0.48 0.1 25)",
+							}}
+						>
+							Log out
+						</button>
+					</>
 				)}
-			</Button>
+			</div>
 		</header>
 	);
 }

@@ -34,10 +34,10 @@ function Auth() {
 	};
 
 	return (
-		<CenteredScreen maxWidth={440}>
+		<CenteredScreen maxWidth={440} background>
 			<BlueprintFrame className="flex flex-col gap-[17px] p-5 shadow-elev-md">
 				<div className="flex flex-col gap-1.5 border-b border-divider pb-3.5">
-					<h2 className="m-0 mt-1.5 text-[26px]">Join the conversation</h2>
+					<h2 className="m-0 mt-1.5">Join the conversation</h2>
 					<p className="text-muted m-0 text-sm">
 						Sign in to unlock match preferences, friends, and chat history.
 					</p>
@@ -46,7 +46,6 @@ function Auth() {
 				<div className="flex flex-col gap-2.5">
 					<Button
 						variant="primary"
-						blueprint
 						block
 						className="h-[52px] justify-start gap-3 px-3.5"
 						onClick={startGoogleLogin}
@@ -55,7 +54,7 @@ function Auth() {
 						Continue with Google
 					</Button>
 
-					{error && <p className="m-0 text-xs text-[#c0392b]">{error}</p>}
+					{error && <p className="m-0 text-xs text-red">{error}</p>}
 
 					<div className="flex items-center gap-2.5">
 						<div className="h-px flex-1 bg-divider" />

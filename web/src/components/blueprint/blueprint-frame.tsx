@@ -1,26 +1,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { BLUEPRINT_CORNERS } from "@/constants";
-
-/** The four `+` registration marks drawn just outside a blueprint box. */
-export function CornerMarks() {
-  return (
-    <>
-      {BLUEPRINT_CORNERS.map((c) => (
-        <i key={c} className={cn("corner", c)} aria-hidden />
-      ))}
-    </>
-  );
-}
 
 type BlueprintFrameProps = React.HTMLAttributes<HTMLDivElement> & {
   as?: React.ElementType;
 };
 
-/**
- * A square, hairline-bordered surface with corner registration marks —
- * the signature container of the Industry / Blueprint aesthetic.
- */
+/** A rounded, filled card surface — the shared container style used across the app. */
 export function BlueprintFrame({
   as: Comp = "div",
   className,
@@ -29,7 +14,6 @@ export function BlueprintFrame({
 }: BlueprintFrameProps) {
   return (
     <Comp className={cn("blueprint relative", className)} {...props}>
-      <CornerMarks />
       {children}
     </Comp>
   );

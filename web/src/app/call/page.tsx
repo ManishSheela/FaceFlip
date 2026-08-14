@@ -6,21 +6,25 @@ import { toast } from "sonner";
 import { MATCH_END_MESSAGES, MATCH_ERROR_MESSAGES, ROUTES } from "@/constants";
 import { useFaceFlip } from "@/hooks/use-faceflip";
 import { useMatchFilters } from "@/hooks/use-match-filters";
-import { useSession } from "@/hooks/use-session";
+import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
-import { formatDuration, getInitials } from "@/lib/utils";
 import { Loader2, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EndCallDialog } from "@/components/dialogs/end-call-dialog";
 import { ReportDialog } from "@/components/dialogs/report-dialog";
 import { VideoCallPanels } from "./_components/video-call-panels";
 import { CallControlBar } from "./_components/call-control-bar";
+import { CallMenu } from "./_components/call-menu";
+import { CallFriendsDrawer } from "./_components/call-friends-drawer";
+import { CallSettingsDrawer } from "./_components/call-settings-drawer";
+import { ChatWithFilter } from "./_components/chat-with-filter";
 import { StrangerChatPanel } from "./_components/stranger-chat-panel";
 
 export default function CallPage() {
 	const router = useRouter();
 	const filters = useMatchFilters();
-	const { isAuthenticated } = useSession();
+	const { isAuthenticated, genderPref } = useSession();
+	const { setGenderPref } = useSessionActions();
 	const {
 		status,
 		mediaState,
@@ -44,12 +48,14 @@ export default function CallPage() {
 		toggleAudio,
 		toggleVideo,
 		reportUser,
+		blockAndSkip,
 		sendFriendRequest,
 	} = useFaceFlip();
 
 	const [endOpen, setEndOpen] = useState(false);
 	const [reportOpen, setReportOpen] = useState(false);
 	const [chatOpen, setChatOpen] = useState(false);
+	const [drawer, setDrawer] = useState<"settings" | "friends" | null>(null);
 	const [readCount, setReadCount] = useState(0);
 	const leavingRef = useRef(false);
 	const mountedRef = useRef(false);
@@ -59,7 +65,6 @@ export default function CallPage() {
 	const inCallRef = useRef(inCall);
 	inCallRef.current = inCall;
 
-	const targetName = partner?.name ?? (matchSource === "friend" ? "Friend" : "Stranger");
 	const unreadCount = Math.max(messages.length - readCount, 0);
 
 	useEffect(() => {
@@ -96,19 +101,20 @@ export default function CallPage() {
 
 	if (mediaState === "error") {
 		return (
-			<section className="flex flex-1 animate-fade-slide-in items-center justify-center p-5">
-				<div className="flex max-w-[420px] flex-col items-center gap-3.5 border border-divider p-5 text-center">
+			<section className="flex flex-1 animate-fade-slide-in items-center justify-center bg-call-bg p-5">
+				<div className="flex max-w-[420px] flex-col items-center gap-3.5 rounded-lg border border-call-divider bg-call-panel p-5 text-center">
 					<VideoOff className="h-8 w-8 text-accent" strokeWidth={1.5} />
-					<h3 className="m-0 text-lg">Camera unavailable</h3>
-					<p className="text-muted m-0 text-sm">
+					<h3 className="m-0 text-lg text-white">Camera unavailable</h3>
+					<p className="m-0 text-sm text-call-muted">
 						{mediaError ? MATCH_ERROR_MESSAGES[mediaError] : ""}
 					</p>
 					<div className="flex gap-2.5">
-						<Button variant="primary" blueprint onClick={() => void ensureMedia()}>
+						<Button variant="primary" onClick={() => void ensureMedia()}>
 							Try again
 						</Button>
 						<Button
 							variant="secondary"
+							className="border-call-divider text-white hover:bg-white/10"
 							onClick={() => {
 								leavingRef.current = true;
 								stop();
@@ -143,23 +149,42 @@ export default function CallPage() {
 		isAuthenticated && matchSource === "random" && partner?.isGuest === false;
 
 	return (
-		<section className="relative flex min-h-[520px] flex-1 animate-fade-slide-in flex-col overflow-hidden sm:flex-row">
+		<section className="relative flex min-h-[520px] flex-1 animate-fade-slide-in flex-col overflow-hidden bg-call-bg sm:flex-row">
 			<VideoCallPanels
-				targetName={targetName}
 				targetGender={partner?.gender ?? null}
-				connected={status === "connected"}
-				timeLabel={formatDuration(elapsed)}
 				camOn={videoEnabled}
 				localStream={localStream}
 				remoteStream={remoteStream}
 				partnerMedia={partnerMedia}
 			/>
 
+			<CallMenu
+				canAddFriend={canAddFriend}
+				friendRequestState={friendRequestState}
+				onAddFriend={sendFriendRequest}
+				onFriends={() => setDrawer("friends")}
+				onSettings={() => setDrawer("settings")}
+				onExit={() => setEndOpen(true)}
+			/>
+
+			{drawer === "settings" && (
+				<CallSettingsDrawer onClose={() => setDrawer(null)} />
+			)}
+			{drawer === "friends" && (
+				<CallFriendsDrawer onClose={() => setDrawer(null)} />
+			)}
+
+			{isAuthenticated && (
+				<ChatWithFilter value={genderPref} onChange={setGenderPref} />
+			)}
+
 			{mediaState === "requesting" && (
-				<div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-bg/85 backdrop-blur-sm">
+				<div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-call-bg/90 backdrop-blur-sm">
 					<Loader2 className="h-7 w-7 animate-spin text-accent" strokeWidth={1.5} />
-					<p className="m-0 text-sm font-medium">Allow camera and microphone</p>
-					<p className="text-muted m-0 text-xs">
+					<p className="m-0 text-sm font-medium text-white">
+						Allow camera and microphone
+					</p>
+					<p className="m-0 text-xs text-call-muted">
 						Your match is waiting for your video.
 					</p>
 				</div>
@@ -169,10 +194,8 @@ export default function CallPage() {
 				<StrangerChatPanel
 					messages={messages}
 					partnerTyping={partnerTyping}
-					partnerInitials={getInitials(targetName)}
 					onSend={sendMessage}
 					onTyping={sendTyping}
-					onClose={() => setChatOpen(false)}
 				/>
 			)}
 
@@ -183,16 +206,11 @@ export default function CallPage() {
 				isFriendCall={matchSource === "friend"}
 				chatOpen={chatOpen}
 				unreadCount={unreadCount}
-				friendRequestState={friendRequestState}
-				canAddFriend={canAddFriend}
 				onToggleChat={() => setChatOpen((open) => !open)}
 				onToggleMic={toggleAudio}
 				onToggleCam={toggleVideo}
 				onNext={findNext}
-				onAddFriend={sendFriendRequest}
-				onEnd={() => setEndOpen(true)}
 				onReport={() => setReportOpen(true)}
-				onSettings={() => leaveTo(`${ROUTES.settings}?from=call`)}
 			/>
 
 			<EndCallDialog
@@ -204,6 +222,7 @@ export default function CallPage() {
 				open={reportOpen}
 				onOpenChange={setReportOpen}
 				onSubmit={reportUser}
+				onBlock={blockAndSkip}
 			/>
 		</section>
 	);

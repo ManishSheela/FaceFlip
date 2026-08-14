@@ -6,28 +6,41 @@
 
 
 :root {
-  --color-bg: #f2f2f3;
-  --color-surface: #e9e9ea;
-  --color-text: #1d1f20;
-  --color-accent: #5980a6;
-  --color-accent-2: #728fab;
-  --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+  --color-bg: oklch(0.955 0.006 75);
+  --color-surface: oklch(0.995 0.002 75);
+  --color-text: oklch(0.22 0.012 260);
+  --color-accent: oklch(0.55 0.085 250);
+  --color-accent-2: oklch(0.45 0.085 250);
+  --color-divider: oklch(0.87 0.006 75);
 
-  --color-neutral-100: #f5f5f8;
-  --color-neutral-200: #e7e7ea;
-  --color-neutral-800: #424244;
-  --color-neutral-900: #2b2b2d;
+  --color-neutral-100: oklch(0.93 0.006 75);
+  --color-neutral-200: oklch(0.89 0.006 75);
+  --color-neutral-800: oklch(0.32 0.012 260);
+  --color-neutral-900: oklch(0.22 0.012 260);
 
-  --color-accent-100: #eef6ff;
-  --color-accent-200: #d6ebff;
-  --color-accent-400: #94bce3;
-  --color-accent-600: #597ea3;
-  --color-accent-700: #416180;
-  --color-accent-800: #2c455d;
-  --color-accent-900: #1d2d3d;
+  --color-accent-100: oklch(0.93 0.02 250);
+  --color-accent-200: oklch(0.87 0.035 250);
+  --color-accent-400: oklch(0.72 0.06 250);
+  --color-accent-600: oklch(0.5 0.09 250);
+  --color-accent-700: oklch(0.42 0.09 250);
+  --color-accent-800: oklch(0.32 0.08 255);
+  --color-accent-900: oklch(0.22 0.06 258);
 
   /* Foreground used on top of an accent fill (e.g. primary buttons). */
-  --color-on-accent: #f2f2f3;
+  --color-on-accent: #ffffff;
+
+  --color-green: oklch(0.64 0.13 150);
+  --color-red: oklch(0.52 0.06 25);
+  --color-amber: oklch(0.72 0.13 80);
+  --color-amber-tint: color-mix(in srgb, var(--color-amber) 18%, var(--color-bg));
+
+  /* Active-call surface is always dark (frosted-glass controls over live video),
+     independent of the light/dark theme toggle. */
+  --color-call-bg: oklch(0.1 0.015 250);
+  --color-call-surface: oklch(0.16 0.025 250);
+  --color-call-divider: oklch(0.22 0.02 250);
+  --color-call-panel: oklch(0.28 0.02 250);
+  --color-call-muted: oklch(0.6 0.02 250);
 
   --font-heading: "Barlow Condensed", system-ui, sans-serif;
   --font-heading-weight: 600;
@@ -41,34 +54,37 @@
   --space-6: 20.4px;
   --space-8: 27.2px;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 7px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 40px;
 
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+  --shadow-sm: 0 1px 4px oklch(0.15 0.01 260 / 0.07);
+  --shadow-md: 0 8px 20px oklch(0.15 0.01 260 / 0.1);
+  --shadow-lg: 0 20px 60px oklch(0.15 0.01 260 / 0.12);
+  --shadow-cta: 0 8px 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
 }
 
 [data-theme="dark"] {
-  --color-bg: #17191b;
-  --color-surface: #232527;
-  --color-text: #f1f0ee;
-  --color-accent: #8fb4d9;
-  --color-accent-2: #9ec2df;
-  --color-divider: color-mix(in srgb, #f1f0ee 18%, transparent);
-  --color-neutral-100: #26272a;
-  --color-neutral-200: #2f3033;
-  --color-neutral-800: #d8d8da;
-  --color-neutral-900: #ececed;
-  --color-accent-100: #223140;
-  --color-accent-200: #2a3d50;
-  --color-accent-800: #cfe3f4;
-  --color-accent-900: #e7f1fa;
-  --color-on-accent: #14181c;
+  --color-bg: oklch(0.16 0.025 250);
+  --color-surface: oklch(0.22 0.02 250);
+  --color-text: #ffffff;
+  --color-divider: oklch(0.28 0.02 250);
+
+  --color-neutral-100: oklch(0.24 0.02 250);
+  --color-neutral-200: oklch(0.28 0.02 250);
+  --color-neutral-800: oklch(0.82 0.02 250);
+  --color-neutral-900: oklch(0.92 0.02 250);
+
+  --color-accent-100: oklch(0.26 0.05 250);
+  --color-accent-200: oklch(0.3 0.06 250);
+  --color-accent-800: oklch(0.85 0.04 250);
+  --color-accent-900: oklch(0.92 0.03 250);
+
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.65);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-cta: 0 8px 24px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
 @layer base {
@@ -124,51 +140,12 @@
     color: color-mix(in srgb, var(--color-text) 55%, transparent);
   }
 
-  /* — Blueprint frame: square, transparent, hairline border with corner marks — */
+  /* — rounded, filled card surface — the shared container style — */
   .blueprint {
     position: relative;
+    background: var(--color-surface);
     border: 1px solid var(--color-divider);
-    border-radius: 0;
-  }
-  .blueprint > .corner {
-    position: absolute;
-    width: 11px;
-    height: 11px;
-    color: color-mix(in srgb, var(--color-text) 55%, transparent);
-  }
-  .blueprint > .corner::before,
-  .blueprint > .corner::after {
-    content: "";
-    position: absolute;
-    background: currentColor;
-  }
-  .blueprint > .corner::before {
-    left: 5px;
-    top: 0;
-    width: 1px;
-    height: 100%;
-  }
-  .blueprint > .corner::after {
-    top: 5px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-  }
-  .blueprint > .corner.tl {
-    top: -6px;
-    left: -6px;
-  }
-  .blueprint > .corner.tr {
-    top: -6px;
-    right: -6px;
-  }
-  .blueprint > .corner.bl {
-    bottom: -6px;
-    left: -6px;
-  }
-  .blueprint > .corner.br {
-    bottom: -6px;
-    right: -6px;
+    border-radius: var(--radius-md);
   }
 
   /* — tags — */
@@ -178,7 +155,7 @@
     font-size: 11px;
     letter-spacing: 0.02em;
     padding: 3px 10px;
-    border-radius: calc(var(--radius-md) * 0.75);
+    border-radius: var(--radius-sm);
   }
   .tag-accent {
     background: var(--color-accent-100);
@@ -203,21 +180,64 @@
   .card-title {
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight);
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.2;
+    margin: 5px 0 4px;
   }
   .card-body {
     margin: 0;
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.4;
     opacity: 0.8;
   }
 
-  /* — matching-screen grid-dot overlay — */
+  /* — shared light-shell grid-dot overlay — */
   .grid-overlay {
     background:
-      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--color-divider) 40px),
-      repeating-linear-gradient(90deg, transparent, transparent 39px, var(--color-divider) 40px);
-    opacity: 0.35;
+      repeating-linear-gradient(0deg, transparent, transparent 39px, oklch(0.72 0.015 250 / 0.38) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, oklch(0.72 0.015 250 / 0.38) 40px);
+  }
+
+  /* — light-shell radial glow, breathing — */
+  .hero-glow {
+    background: radial-gradient(
+      ellipse 700px 500px at 50% 46%,
+      oklch(0.8 0.12 250 / 0.7) 0%,
+      transparent 70%
+    );
+  }
+
+  /* — orbiting colour blobs behind light screens — */
+  .hero-blob-1 {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, oklch(0.7 0.12 250 / 0.55) 0%, transparent 70%);
+  }
+  .hero-blob-2 {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, oklch(0.68 0.1 200 / 0.4) 0%, transparent 70%);
+  }
+  .hero-blob-3 {
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, oklch(0.72 0.12 270 / 0.48) 0%, transparent 70%);
+  }
+
+  /* — diagonal-stripe placeholder behind an empty video tile — */
+  .video-stripe-you {
+    background-image: repeating-linear-gradient(
+      45deg,
+      oklch(0.13 0.015 250) 0 18px,
+      oklch(0.11 0.015 250) 18px 36px
+    );
+  }
+  .video-stripe-partner {
+    background-image: repeating-linear-gradient(
+      45deg,
+      oklch(0.15 0.018 250) 0 18px,
+      oklch(0.125 0.018 250) 18px 36px
+    );
   }
 }
 

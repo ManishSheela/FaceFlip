@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
+import { SegmentedControl } from "@/components/blueprint/segmented-control";
 import { CenteredScreen } from "@/components/layout/centered-screen";
 import type { GenderPref } from "@/types";
 
@@ -15,7 +15,7 @@ export default function GenderPage() {
   const { setGenderPref } = useSessionActions();
 
   return (
-    <CenteredScreen maxWidth={420}>
+    <CenteredScreen maxWidth={420} background>
       <BlueprintFrame className="flex flex-col gap-[17px] p-5 shadow-elev-md">
         <div>
           <h2 className="m-0 mb-1">Who do you want to meet?</h2>
@@ -24,25 +24,16 @@ export default function GenderPage() {
           </p>
         </div>
 
-        <RadioGroup
+        <SegmentedControl
+          aria-label="Who do you want to meet?"
+          options={GENDER_PREF_OPTIONS}
           value={genderPref}
           onValueChange={(v) => setGenderPref(v as GenderPref)}
-          className="gap-1.5"
-        >
-          {GENDER_PREF_OPTIONS.map((option) => (
-            <label
-              key={option.value}
-              className="flex cursor-pointer items-center gap-2 border border-divider px-3.5 py-2.5 text-sm"
-            >
-              <RadioGroupItem value={option.value} />
-              {option.label}
-            </label>
-          ))}
-        </RadioGroup>
+          className="w-fit"
+        />
 
         <Button
           variant="primary"
-          blueprint
           block
           size="lg"
           onClick={() => router.push(ROUTES.matching)}

@@ -10,7 +10,8 @@ export interface SegmentedOption<T extends string> {
 
 interface SegmentedControlProps<T extends string> {
   options: SegmentedOption<T>[];
-  value: T;
+  /** Pass `null` when no option should render as active yet. */
+  value: T | null;
   onValueChange: (value: T) => void;
   className?: string;
   "aria-label"?: string;
@@ -32,7 +33,7 @@ export function SegmentedControl<T extends string>({
       role="radiogroup"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex overflow-hidden rounded-none border border-divider",
+        "inline-flex overflow-hidden rounded-md border border-divider",
         className,
       )}
     >

@@ -31,6 +31,7 @@ export interface FeatureCard {
 	kicker: string;
 	title: string;
 	body: string;
+	premium?: boolean;
 }
 
 export interface DeviceOption {

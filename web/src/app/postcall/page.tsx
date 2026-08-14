@@ -28,7 +28,7 @@ function PostCall() {
 				<h2 className="m-0">Call ended</h2>
 				<p className="text-muted m-0">Lasted {formatDuration(seconds)}</p>
 
-				<Button asChild variant="primary" blueprint block size="lg">
+				<Button asChild variant="primary" block size="lg">
 					<Link href={ROUTES.matching}>Next stranger</Link>
 				</Button>
 

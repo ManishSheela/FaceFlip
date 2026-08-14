@@ -36,6 +36,7 @@ export default async function RootLayout({
 			<body>
 				<AppProviders initialSession={initialSession}>
 					<div className="flex min-h-screen flex-col bg-bg text-text">
+						<div aria-hidden className="h-1 flex-none bg-accent" />
 						<Navbar />
 						<CallBanner />
 						<main className="flex flex-1 flex-col">{children}</main>
