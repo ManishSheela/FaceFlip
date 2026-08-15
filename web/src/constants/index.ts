@@ -4,6 +4,7 @@ import type {
 	GenderPref,
 	GenderPreference,
 	MatchErrorCode,
+	PremiumPlanId,
 	SocketGender,
 	ReportReason,
 	Theme,
@@ -113,6 +114,30 @@ export const GENDER_PREF_LABELS: Record<GenderPref, string> = {
 export const GENDER_PREF_OPTIONS: { label: string; value: GenderPref }[] = (
 	["male", "female", "random"] as const
 ).map((value) => ({ label: GENDER_PREF_LABELS[value], value }));
+
+export const PREMIUM_GATED_GENDER_PREFS: GenderPref[] = ["male", "female"];
+
+export const PREMIUM_PLANS: {
+	id: PremiumPlanId;
+	label: string;
+	priceLabel: string;
+	period: string;
+	badge?: string;
+}[] = [
+	{ id: "week", label: "1 Week", priceLabel: "₹49", period: "/ week" },
+	{
+		id: "month",
+		label: "1 Month",
+		priceLabel: "₹149",
+		period: "/ month",
+		badge: "Best value",
+	},
+];
+
+export const PREMIUM_PLAN_LABELS: Record<PremiumPlanId, string> = {
+	week: "1 Week",
+	month: "1 Month",
+};
 
 export const USER_GENDER_OPTIONS: { label: string; value: UserGender }[] = [
 	{ label: "Male", value: "male" },

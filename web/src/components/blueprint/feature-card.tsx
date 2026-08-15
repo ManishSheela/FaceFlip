@@ -6,6 +6,7 @@ import { BlueprintFrame } from "./blueprint-frame";
 export function FeatureCard({ kicker, title, body, premium }: FeatureCardData) {
   return (
     <BlueprintFrame
+      bracketColor={premium ? "var(--color-amber)" : undefined}
       className={cn(
         "flex w-full flex-col gap-1.5 p-3.5 text-left",
         premium && "border-amber-tint bg-amber-tint",

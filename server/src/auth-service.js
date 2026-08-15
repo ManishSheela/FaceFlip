@@ -65,11 +65,11 @@ authRouter.patch(
     const userId = getSessionUserId(req);
     if (!userId) return res.status(401).json({ error: AUTH_ERRORS.notSignedIn });
 
-    const { data, error } = buildProfileUpdate(req.body ?? {});
-    if (error) return res.status(400).json({ error });
-
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return res.status(401).json({ error: AUTH_ERRORS.notSignedIn });
+
+    const { data, error } = buildProfileUpdate(user, req.body ?? {});
+    if (error) return res.status(400).json({ error });
 
     const updated = await prisma.user.update({ where: { id: userId }, data });
     res.json({ user: await withFriendCount(updated) });

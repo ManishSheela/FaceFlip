@@ -4,6 +4,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -37,12 +38,13 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "relative z-50 flex w-full max-w-[440px] flex-col gap-2.5 rounded-lg border border-divider bg-surface p-5 shadow-elev-lg",
+          "relative z-50 flex w-full max-w-[440px] flex-col gap-2.5 rounded-none border border-divider bg-surface p-5 shadow-elev-lg",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           className,
         )}
         {...props}
       >
+        <CornerBrackets />
         {children}
         {showClose && (
           <DialogPrimitive.Close

@@ -1,18 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GENDER_PREF_OPTIONS, ROUTES } from "@/constants";
+import { GENDER_PREF_OPTIONS, PREMIUM_GATED_GENDER_PREFS, ROUTES } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { BlueprintFrame } from "@/components/blueprint/blueprint-frame";
 import { SegmentedControl } from "@/components/blueprint/segmented-control";
 import { CenteredScreen } from "@/components/layout/centered-screen";
+import { PremiumGateDialog } from "@/components/dialogs/premium-gate-dialog";
 import type { GenderPref } from "@/types";
 
 export default function GenderPage() {
   const router = useRouter();
-  const { genderPref } = useSession();
+  const { genderPref, isPremium } = useSession();
   const { setGenderPref } = useSessionActions();
+  const [gateOpen, setGateOpen] = useState(false);
 
   return (
     <CenteredScreen maxWidth={420} background>
@@ -29,6 +32,8 @@ export default function GenderPage() {
           options={GENDER_PREF_OPTIONS}
           value={genderPref}
           onValueChange={(v) => setGenderPref(v as GenderPref)}
+          lockedValues={isPremium ? [] : PREMIUM_GATED_GENDER_PREFS}
+          onLockedSelect={() => setGateOpen(true)}
           className="w-fit"
         />
 
@@ -41,6 +46,8 @@ export default function GenderPage() {
           Continue
         </Button>
       </BlueprintFrame>
+
+      <PremiumGateDialog open={gateOpen} onOpenChange={setGateOpen} />
     </CenteredScreen>
   );
 }

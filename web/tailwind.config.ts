@@ -54,10 +54,6 @@ const config: Config = {
 				"elev-cta": "var(--shadow-cta)",
 			},
 			keyframes: {
-				radarPulse: {
-					"0%": { transform: "scale(0.55)", opacity: "0.8" },
-					"100%": { transform: "scale(2.3)", opacity: "0" },
-				},
 				gradientShift: {
 					"0%, 100%": { backgroundPosition: "0% 50%" },
 					"50%": { backgroundPosition: "100% 50%" },
@@ -71,8 +67,8 @@ const config: Config = {
 					"50%": { opacity: "0.85" },
 				},
 				gridDrift: {
-					"0%": { backgroundPosition: "0 0" },
-					"100%": { backgroundPosition: "40px 40px" },
+					"0%": { transform: "translate3d(0, 0, 0)" },
+					"100%": { transform: "translate3d(40px, 40px, 0)" },
 				},
 				orbit1: {
 					"0%": { transform: "rotate(0deg) translateX(220px) rotate(0deg)" },
@@ -98,7 +94,6 @@ const config: Config = {
 				},
 			},
 			animation: {
-				"radar-pulse": "radarPulse 2.2s ease-out infinite",
 				"gradient-shift": "gradientShift 9s ease-in-out infinite",
 				"fade-slide-in": "fadeSlideIn 0.35s ease both",
 				"hero-glow": "heroGlow 5s ease-in-out infinite",

@@ -192,10 +192,16 @@
   }
 
   /* — shared light-shell grid-dot overlay — */
+  /* Oversized by one tile (40px) on every edge so the transform-based drift
+     below never exposes an edge; animating `transform` (not `background-position`)
+     keeps this on the compositor thread instead of repainting every frame,
+     which is what caused the periodic stutter/flicker. */
   .grid-overlay {
+    inset: -40px;
     background:
       repeating-linear-gradient(0deg, transparent, transparent 39px, oklch(0.72 0.015 250 / 0.38) 40px),
       repeating-linear-gradient(90deg, transparent, transparent 39px, oklch(0.72 0.015 250 / 0.38) 40px);
+    will-change: transform;
   }
 
   /* — light-shell radial glow, breathing — */
@@ -205,6 +211,7 @@
       oklch(0.8 0.12 250 / 0.7) 0%,
       transparent 70%
     );
+    will-change: opacity;
   }
 
   /* — orbiting colour blobs behind light screens — */
@@ -212,16 +219,19 @@
     width: 120px;
     height: 120px;
     background: radial-gradient(circle, oklch(0.7 0.12 250 / 0.55) 0%, transparent 70%);
+    will-change: transform;
   }
   .hero-blob-2 {
     width: 90px;
     height: 90px;
     background: radial-gradient(circle, oklch(0.68 0.1 200 / 0.4) 0%, transparent 70%);
+    will-change: transform;
   }
   .hero-blob-3 {
     width: 70px;
     height: 70px;
     background: radial-gradient(circle, oklch(0.72 0.12 270 / 0.48) 0%, transparent 70%);
+    will-change: transform;
   }
 
   /* — diagonal-stripe placeholder behind an empty video tile — */

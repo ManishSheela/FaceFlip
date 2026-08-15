@@ -18,6 +18,11 @@ export const GENDER_VALUES = {
   random: "RANDOM",
 };
 
+export const PREMIUM_PLANS = {
+  week: { code: "WEEK", days: 7 },
+  month: { code: "MONTH", days: 30 },
+};
+
 export const SERVER_ERROR = "Something went wrong.";
 
 export const GENDERS = ["male", "female", "other"];
@@ -65,4 +70,6 @@ export const AUTH_ERRORS = {
   invalidGender: "Invalid gender.",
   invalidGenderPref: "Invalid match preference.",
   nothingToUpdate: "Nothing to update.",
+  premiumRequired: "Gender matching is a premium feature.",
+  invalidPlan: "Invalid plan.",
 };

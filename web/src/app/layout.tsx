@@ -16,7 +16,7 @@ const themeScript = `
 (function () {
   try {
     var t = localStorage.getItem('${THEME_STORAGE_KEY}');
-    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
   } catch (e) {}
 })();
 `;
@@ -29,7 +29,7 @@ export default async function RootLayout({
 	const initialSession = await getServerSession();
 
 	return (
-		<html lang="en" data-theme="light" suppressHydrationWarning>
+		<html lang="en" data-theme="dark" suppressHydrationWarning>
 			<head>
 				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
 			</head>

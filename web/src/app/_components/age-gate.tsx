@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ROUTES } from "@/constants";
-import { cn, loadAgeConfirmed, saveAgeConfirmed } from "@/lib/utils";
+import { loadAgeConfirmed, saveAgeConfirmed } from "@/lib/utils";
 import { useSession } from "@/hooks/use-session";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { ToggleRow } from "@/components/blueprint/toggle-row";
-
-const CORNER_MARK =
-	"absolute font-mono text-sm leading-none text-divider select-none pointer-events-none";
 
 export function AgeGate() {
 	const router = useRouter();
@@ -26,13 +24,9 @@ export function AgeGate() {
 	};
 
 	return (
-		<div className="relative w-full max-w-[480px] text-left">
-			<span className={cn(CORNER_MARK, "-left-2 -top-2")}>+</span>
-			<span className={cn(CORNER_MARK, "-right-2 -top-2")}>+</span>
-			<span className={cn(CORNER_MARK, "-bottom-2 -left-2")}>+</span>
-			<span className={cn(CORNER_MARK, "-bottom-2 -right-2")}>+</span>
-
-			<div className="overflow-hidden rounded-md border border-divider">
+		<div className="w-full max-w-[480px] text-left">
+			<div className="relative border border-divider">
+				<CornerBrackets />
 				<div className="bg-surface p-4">
 					<ToggleRow
 						title="I'm 18 or older"

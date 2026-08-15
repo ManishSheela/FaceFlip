@@ -4,9 +4,10 @@ import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md border font-heading font-semibold text-sm leading-tight transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:pointer-events-none disabled:opacity-45",
+  "relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap border font-heading font-semibold text-sm leading-tight transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
@@ -21,9 +22,9 @@ const buttonVariants = cva(
           "bg-white/[0.14] text-white border-white/30 hover:bg-white/20 active:bg-white/25",
       },
       size: {
-        default: "h-9 px-3.5 py-1.5",
-        sm: "h-8 px-3 text-[13px]",
-        lg: "h-[46px] px-6 text-base",
+        default: "h-9 px-3.5 py-1.5 rounded-none",
+        sm: "h-8 px-3 text-[13px] rounded-none",
+        lg: "h-[46px] px-6 text-base rounded-none",
         icon: "h-9 w-9 rounded-full p-0",
       },
     },
@@ -45,6 +46,7 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, block = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
+    const showBrackets = !block && size !== "icon";
     return (
       <Comp
         ref={ref}
@@ -55,6 +57,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
+        {showBrackets && <CornerBrackets size={5} color="currentColor" />}
         <Slottable>{children}</Slottable>
       </Comp>
     );

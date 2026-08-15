@@ -1,4 +1,5 @@
 import { FEATURE_CARDS, LANDING_STATS } from "@/constants";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { FeatureCard } from "@/components/blueprint/feature-card";
 import { StatItem } from "@/components/blueprint/stat-item";
 import { AnimatedBackground } from "@/components/layout/animated-background";
@@ -27,7 +28,8 @@ export default function HomePage() {
 
 				<AgeGate />
 
-				<div className="mt-1 flex overflow-hidden rounded-md border border-divider bg-surface">
+				<div className="relative mt-1 flex border border-divider bg-surface">
+					<CornerBrackets />
 					{LANDING_STATS.map((stat, i) => (
 						<div
 							key={stat.label}

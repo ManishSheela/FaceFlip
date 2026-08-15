@@ -13,6 +13,7 @@ import { ApiService } from "@/lib/api-service";
 import type {
 	GenderPref,
 	GoogleProfile,
+	PremiumPlanId,
 	ServerSession,
 	UserGender,
 } from "@/types";
@@ -39,12 +40,16 @@ export interface SessionState {
 	profileEmail: string;
 	genderPref: GenderPref;
 	userGender: UserGender | null;
+	isPremium: boolean;
+	premiumPlan: PremiumPlanId | null;
+	premiumExpiresAt: string | null;
 }
 
 export interface SessionActions {
 	setProfileName: (name: string) => void;
 	setGenderPref: (pref: GenderPref) => void;
 	setUserGender: (gender: UserGender) => void;
+	purchasePremium: (plan: PremiumPlanId) => Promise<boolean>;
 	refresh: () => Promise<void>;
 	signOut: () => Promise<void>;
 }
@@ -97,6 +102,9 @@ export function SessionProvider({
 			profileEmail: user?.email ?? "",
 			genderPref: profile.genderPref ?? user?.genderPref ?? "random",
 			userGender,
+			isPremium: user?.premium.active ?? false,
+			premiumPlan: user?.premium.plan ?? null,
+			premiumExpiresAt: user?.premium.expiresAt ?? null,
 		}),
 		[user, status, profile, userGender],
 	);
@@ -124,6 +132,16 @@ export function SessionProvider({
 			setUserGender: (userGender) => {
 				update({ userGender });
 				void persist({ gender: userGender });
+			},
+			purchasePremium: async (plan) => {
+				if (!userRef.current) return false;
+				const saved = await ApiService.checkoutPremium(plan);
+				if (saved) {
+					setUser(saved);
+					return true;
+				}
+				toast.error("Couldn't complete checkout. Please try again.");
+				return false;
 			},
 			refresh: async () => {
 				const fetched = await ApiService.fetchSession();

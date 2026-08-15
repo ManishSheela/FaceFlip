@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LogOut, Settings, UserPlus, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import type { FriendRequestState } from "@/types";
 
 const FRIEND_LABELS: Record<FriendRequestState, string> = {
@@ -59,15 +60,17 @@ export function CallMenu({
 				onClick={() => setOpen((v) => !v)}
 				aria-label="Call menu"
 				aria-expanded={open}
-				className="flex h-8 w-8 cursor-pointer flex-col items-center justify-center gap-[3px] rounded-full border border-white/10 bg-black/50 backdrop-blur-md"
+				className="relative flex h-8 w-8 cursor-pointer flex-col items-center justify-center gap-[3px] border border-white/10 bg-black/50 backdrop-blur-md"
 			>
+				<CornerBrackets size={5} color="var(--color-accent-400)" />
 				<span className="h-[1.5px] w-3.5 rounded-sm bg-white" />
 				<span className="h-[1.5px] w-3.5 rounded-sm bg-white" />
 				<span className="h-[1.5px] w-3.5 rounded-sm bg-white" />
 			</button>
 
 			{open && (
-				<div className="absolute left-0 top-[38px] flex min-w-[140px] flex-col gap-0.5 rounded-[12px] border border-white/10 bg-[oklch(0.18_0.02_250)] p-1.5 backdrop-blur-lg">
+				<div className="absolute left-0 top-[38px] flex min-w-[140px] flex-col gap-0.5 border border-white/10 bg-[oklch(0.18_0.02_250)] p-1.5 backdrop-blur-lg">
+					<CornerBrackets size={5} color="var(--color-accent-400)" />
 					{canAddFriend &&
 						(friendRequestState ? (
 							<span className={cn(ITEM_CLASS, "cursor-default text-call-muted")}>

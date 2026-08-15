@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
 import { USER_GENDER_OPTIONS } from "@/constants";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { cn, getInitials } from "@/lib/utils";
 import type { UserGender } from "@/types";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { CallDrawer } from "./call-drawer";
 
 const MONO_LABEL =
 	"font-heading text-[10px] uppercase tracking-[0.06em] text-call-muted";
 const FIELD_BOX =
-	"rounded-md border border-call-panel bg-call-divider px-3 py-2.5 text-[13px] text-white";
+	"border border-call-panel bg-call-divider px-3 py-2.5 text-[13px] text-white";
 
 interface ToggleRowProps {
 	label: string;
@@ -50,7 +50,7 @@ interface CallSettingsDrawerProps {
 }
 
 export function CallSettingsDrawer({ onClose }: CallSettingsDrawerProps) {
-	const { profileName, userGender } = useSession();
+	const { profileName, profileEmail, userGender } = useSession();
 	const { setProfileName, setUserGender } = useSessionActions();
 
 	const [name, setName] = useState(profileName);
@@ -68,16 +68,11 @@ export function CallSettingsDrawer({ onClose }: CallSettingsDrawerProps) {
 		<CallDrawer title="Settings" onClose={onClose}>
 			<div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
 				<div className="flex flex-col items-center gap-2.5 border-b border-call-divider pb-4">
-					<div className="relative">
-						<div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent-2 bg-accent-100 font-heading text-xl font-semibold text-white">
-							{getInitials(name || profileName)}
-						</div>
-						<span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full border-2 border-call-surface bg-accent">
-							<Pencil className="h-2.5 w-2.5 text-white" strokeWidth={2.5} />
-						</span>
+					<div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent-2 bg-accent-100 font-heading text-xl font-semibold text-white">
+						{getInitials(name || profileName)}
 					</div>
 					<span className="text-[13px] font-semibold text-white">
-						Your profile
+						{profileEmail}
 					</span>
 				</div>
 
@@ -86,12 +81,18 @@ export function CallSettingsDrawer({ onClose }: CallSettingsDrawerProps) {
 						<label htmlFor="drawer-name" className={MONO_LABEL}>
 							Display name
 						</label>
-						<input
-							id="drawer-name"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							className={cn(FIELD_BOX, "outline-none focus-visible:border-accent")}
-						/>
+						<div className="relative">
+							<CornerBrackets size={5} color="var(--color-accent-400)" />
+							<input
+								id="drawer-name"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								className={cn(
+									FIELD_BOX,
+									"w-full outline-none focus-visible:border-accent",
+								)}
+							/>
+						</div>
 					</div>
 
 					<div className="flex flex-col gap-1.5">
@@ -105,12 +106,16 @@ export function CallSettingsDrawer({ onClose }: CallSettingsDrawerProps) {
 										type="button"
 										onClick={() => setGender(option.value)}
 										className={cn(
-											"flex-1 cursor-pointer rounded-md py-2.5 text-center text-xs font-semibold transition-colors",
+											"relative flex-1 cursor-pointer py-2.5 text-center text-xs font-semibold transition-colors",
 											active
 												? "bg-accent text-on-accent"
 												: "bg-call-divider text-call-muted hover:text-white",
 										)}
 									>
+										<CornerBrackets
+											size={5}
+											color={active ? "var(--color-on-accent)" : "var(--color-accent-400)"}
+										/>
 										{option.label}
 									</button>
 								);
@@ -133,8 +138,9 @@ export function CallSettingsDrawer({ onClose }: CallSettingsDrawerProps) {
 				<button
 					type="button"
 					onClick={save}
-					className="mt-1 w-full cursor-pointer rounded-md border-none bg-accent py-3 font-heading text-[13px] font-bold text-on-accent transition-colors hover:bg-accent-600"
+					className="relative mt-1 w-full cursor-pointer border-none bg-accent py-3 font-heading text-[13px] font-bold text-on-accent transition-colors hover:bg-accent-600"
 				>
+					<CornerBrackets size={6} color="var(--color-on-accent)" />
 					Save changes
 				</button>
 			</div>

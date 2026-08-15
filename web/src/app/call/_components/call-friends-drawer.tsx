@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Phone } from "lucide-react";
 import { useFaceFlip } from "@/hooks/use-faceflip";
 import { cn, getInitials } from "@/lib/utils";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { CallDrawer } from "./call-drawer";
 
 interface CallFriendsDrawerProps {
@@ -36,8 +37,9 @@ export function CallFriendsDrawer({ onClose }: CallFriendsDrawerProps) {
 				{incomingRequests.map((request) => (
 					<div
 						key={request.id}
-						className="flex flex-col gap-2 rounded-md border border-accent/40 bg-accent-100 px-3 py-2.5"
+						className="relative flex flex-col gap-2 border border-accent/40 bg-accent-100 px-3 py-2.5"
 					>
+						<CornerBrackets size={5} />
 						<span className="font-heading text-[10px] uppercase tracking-[0.06em] text-accent">
 							Friend request
 						</span>
@@ -58,15 +60,17 @@ export function CallFriendsDrawer({ onClose }: CallFriendsDrawerProps) {
 							<button
 								type="button"
 								onClick={() => acceptRequest(request.id)}
-								className="flex-1 cursor-pointer rounded-md border-none bg-accent py-2 font-heading text-[11px] font-bold text-on-accent"
+								className="relative flex-1 cursor-pointer border-none bg-accent py-2 font-heading text-[11px] font-bold text-on-accent"
 							>
+								<CornerBrackets size={5} color="var(--color-on-accent)" />
 								Accept
 							</button>
 							<button
 								type="button"
 								onClick={() => rejectRequest(request.id)}
-								className="flex-1 cursor-pointer rounded-md border border-call-panel bg-call-panel py-2 text-[11px] font-semibold text-call-muted"
+								className="relative flex-1 cursor-pointer border border-call-panel bg-call-panel py-2 text-[11px] font-semibold text-call-muted"
 							>
+								<CornerBrackets size={5} color="var(--color-accent-400)" />
 								Decline
 							</button>
 						</div>
@@ -81,8 +85,9 @@ export function CallFriendsDrawer({ onClose }: CallFriendsDrawerProps) {
 					friends.map((friend) => (
 						<div
 							key={friend.userId}
-							className="flex items-center gap-2.5 rounded-md bg-call-divider px-3 py-2.5"
+							className="relative flex items-center gap-2.5 bg-call-divider px-3 py-2.5"
 						>
+							<CornerBrackets size={5} color="var(--color-accent-400)" />
 							<div className="relative flex-none">
 								<span className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-call-panel font-heading text-[11px] text-white">
 									{getInitials(friend.name)}

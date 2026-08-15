@@ -2,6 +2,7 @@
 
 import { Flag, MessageSquare, Mic, MicOff, Video, VideoOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { Tag } from "@/components/blueprint/tag";
 
 interface CallControlBarProps {
@@ -40,7 +41,8 @@ export function CallControlBar({
 	onReport,
 }: CallControlBarProps) {
 	return (
-		<div className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-3.5 rounded-[44px] bg-black/50 px-7 py-3.5 backdrop-blur-[10px] sm:left-1/4">
+		<div className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-4 bg-black/70 px-8 py-2 backdrop-blur-[10px] sm:left-1/4">
+			<CornerBrackets size={10} color="var(--color-accent-400)" />
 			<div className="flex flex-col items-center gap-1.5">
 				<button
 					type="button"

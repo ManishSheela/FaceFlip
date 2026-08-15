@@ -30,3 +30,8 @@ export function getInitials(name: string): string {
 		.slice(0, 2)
 		.toUpperCase();
 }
+
+export function daysRemaining(isoDate: string): number {
+	const ms = new Date(isoDate).getTime() - Date.now();
+	return Math.max(0, Math.ceil(ms / (24 * 60 * 60 * 1000)));
+}

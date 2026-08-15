@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MicOff, Sun, VideoOff } from "lucide-react";
 import type { PartnerMedia, SocketGender } from "@/types";
+import { CornerBrackets } from "@/components/blueprint/corner-brackets";
 import { GenderBadge } from "./gender-badge";
 
 interface VideoCallPanelsProps {
@@ -74,7 +75,8 @@ export function VideoCallPanels({
 					)}
 				</div>
 
-				<div className="absolute right-3.5 top-3.5 z-[5] flex h-8 items-center gap-2 whitespace-nowrap rounded-3xl border border-white/10 bg-black/50 px-3 backdrop-blur-md">
+				<div className="absolute right-3.5 top-3.5 z-[5] flex h-8 items-center gap-2 whitespace-nowrap border border-white/10 bg-black/50 px-3 backdrop-blur-md">
+					<CornerBrackets size={6} color="var(--color-accent-400)" />
 					<Sun className="h-[13px] w-[13px] text-call-muted" strokeWidth={2} />
 					<span className="font-heading text-[9px] uppercase tracking-[0.06em] text-call-muted">
 						Blur

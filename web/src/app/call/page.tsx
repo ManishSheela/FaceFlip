@@ -10,6 +10,7 @@ import { useSession, useSessionActions } from "@/hooks/use-session";
 import { Loader2, Video, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EndCallDialog } from "@/components/dialogs/end-call-dialog";
+import { PremiumGateDialog } from "@/components/dialogs/premium-gate-dialog";
 import { ReportDialog } from "@/components/dialogs/report-dialog";
 import { VideoCallPanels } from "./_components/video-call-panels";
 import { CallControlBar } from "./_components/call-control-bar";
@@ -22,7 +23,7 @@ import { StrangerChatPanel } from "./_components/stranger-chat-panel";
 export default function CallPage() {
 	const router = useRouter();
 	const filters = useMatchFilters();
-	const { isAuthenticated, genderPref } = useSession();
+	const { isAuthenticated, genderPref, isPremium } = useSession();
 	const { setGenderPref } = useSessionActions();
 	const {
 		status,
@@ -55,6 +56,7 @@ export default function CallPage() {
 
 	const [endOpen, setEndOpen] = useState(false);
 	const [reportOpen, setReportOpen] = useState(false);
+	const [gateOpen, setGateOpen] = useState(false);
 	const [chatOpen, setChatOpen] = useState(false);
 	const [drawer, setDrawer] = useState<"settings" | "friends" | null>(null);
 	const [readCount, setReadCount] = useState(0);
@@ -181,7 +183,12 @@ export default function CallPage() {
 			)}
 
 			{isAuthenticated && (
-				<ChatWithFilter value={genderPref} onChange={setGenderPref} />
+				<ChatWithFilter
+					value={genderPref}
+					isPremium={isPremium}
+					onChange={setGenderPref}
+					onLockedSelect={() => setGateOpen(true)}
+				/>
 			)}
 
 			{mediaState === "idle" && (
@@ -247,6 +254,7 @@ export default function CallPage() {
 				onSubmit={reportUser}
 				onBlock={blockAndSkip}
 			/>
+			<PremiumGateDialog open={gateOpen} onOpenChange={setGateOpen} />
 		</section>
 	);
 }

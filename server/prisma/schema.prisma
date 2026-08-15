@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  googleId     String     @unique
-  email        String     @unique
-  name         String
-  picture      String?
-  gender       Gender?
-  genderPref   Gender   @default(RANDOM)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String       @id @default(cuid())
+  googleId          String       @unique
+  email             String       @unique
+  name              String
+  picture           String?
+  gender            Gender?
+  genderPref        Gender   @default(RANDOM)
+  premiumPlan       PremiumPlan?
+  premiumExpiresAt  DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   friendshipsSent     Friendship[] @relation("Requester")
   friendshipsReceived Friendship[] @relation("Addressee")
@@ -28,6 +30,11 @@ enum Gender {
   MALE
   FEMALE
   RANDOM
+}
+
+enum PremiumPlan {
+  WEEK
+  MONTH
 }
 
 model Friendship {

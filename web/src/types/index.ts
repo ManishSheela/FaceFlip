@@ -6,6 +6,14 @@ export type UserGender = "male" | "female" | "random";
 
 export type CallType = "video" | "voice";
 
+export type PremiumPlanId = "week" | "month";
+
+export interface PremiumState {
+	active: boolean;
+	plan: PremiumPlanId | null;
+	expiresAt: string | null;
+}
+
 export type ReportReason = "spam" | "inappropriate" | "underage" | "other";
 
 export interface Friend {
@@ -47,6 +55,7 @@ export interface GoogleProfile {
 	gender: UserGender | null;
 	genderPref: GenderPref;
 	friendCount: number;
+	premium: PremiumState;
 }
 
 export interface ServerSession {

@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "node:http";
 import { authRouter } from "./auth-service.js";
+import { premiumRouter } from "./premium-service.js";
 import { initSocketServer } from "./socket/index.js";
 import { iceServers } from "./config/ice.js";
 import { CLIENT_ORIGIN, PORT, SERVER_ERROR } from "./constants.js";
@@ -27,6 +28,7 @@ app.get("/health", (_req, res) =>
 );
 
 app.use("/auth", authRouter);
+app.use("/premium", premiumRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

@@ -7,6 +7,19 @@ import {
   GENDER_VALUES,
 } from "./constants.js";
 
+export function isPremiumActive(user) {
+  return Boolean(user.premiumExpiresAt && user.premiumExpiresAt > new Date());
+}
+
+function publicPremium(user) {
+  const active = isPremiumActive(user);
+  return {
+    active,
+    plan: active ? (user.premiumPlan?.toLowerCase() ?? null) : null,
+    expiresAt: active ? user.premiumExpiresAt.toISOString() : null,
+  };
+}
+
 export function toPublicUser(user) {
   return {
     id: user.id,
@@ -15,6 +28,7 @@ export function toPublicUser(user) {
     picture: user.picture,
     gender: user.gender?.toLowerCase() ?? null,
     genderPref: user.genderPref.toLowerCase(),
+    premium: publicPremium(user),
   };
 }
 
@@ -42,7 +56,7 @@ function isAllowed(allowedValues, value) {
   return typeof value === "string" && Object.hasOwn(allowedValues, value);
 }
 
-export function buildProfileUpdate({ gender, genderPref }) {
+export function buildProfileUpdate(user, { gender, genderPref }) {
   const data = {};
 
   if (gender !== undefined) {
@@ -55,6 +69,9 @@ export function buildProfileUpdate({ gender, genderPref }) {
   if (genderPref !== undefined) {
     if (!isAllowed(GENDER_VALUES, genderPref)) {
       return { error: AUTH_ERRORS.invalidGenderPref };
+    }
+    if (genderPref !== "random" && !isPremiumActive(user)) {
+      return { error: AUTH_ERRORS.premiumRequired };
     }
     data.genderPref = GENDER_VALUES[genderPref];
   }
