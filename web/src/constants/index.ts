@@ -22,8 +22,6 @@ export const AGE_CONFIRMED_STORAGE_KEY = "faceflip-age-confirmed";
 export const API_URL =
 	process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
-export const SESSION_COOKIE = "faceflip_session";
-
 export const REQUEST_TIMEOUT_MS = 15000;
 
 export const CHAT_REPLY_DELAY_MS = 1000;
