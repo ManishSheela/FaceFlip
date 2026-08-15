@@ -40,7 +40,8 @@ authRouter.get(
 
       setSessionCookie(res, user.id);
       res.redirect(clientAuthUrl());
-    } catch {
+    } catch (err) {
+      console.error("Google sign-in callback failed:", err);
       res.redirect(clientAuthUrl("failed"));
     }
   }),
