@@ -8,10 +8,15 @@ import {
   SESSION_MAX_AGE_MS,
 } from "./constants.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// Frontend and backend run on different domains in production, so the
+// session cookie needs SameSite=None (which browsers require pairing with
+// Secure) to be sent on cross-site fetch/XHR requests from the client.
 const sessionCookieOptions = {
   httpOnly: true,
-  sameSite: "lax",
-  secure: process.env.NODE_ENV === "production",
+  sameSite: isProduction ? "none" : "lax",
+  secure: isProduction,
   maxAge: SESSION_MAX_AGE_MS,
 };
 
