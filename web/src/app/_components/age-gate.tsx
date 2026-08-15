@@ -46,7 +46,7 @@ export function AgeGate() {
 					type="button"
 					disabled={!ageConfirmed}
 					onClick={() =>
-						router.push(isAuthenticated ? ROUTES.matching : ROUTES.auth)
+						router.push(isAuthenticated ? ROUTES.call : ROUTES.auth)
 					}
 					className="flex w-full cursor-pointer items-center justify-center gap-2.5 border-none bg-accent px-4 py-4 font-heading text-base font-bold text-on-accent shadow-elev-cta transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-45"
 				>

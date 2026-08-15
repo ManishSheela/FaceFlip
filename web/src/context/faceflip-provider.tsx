@@ -175,14 +175,20 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 		setPartner(null);
 	}, []);
 
-	const teardownSession = useCallback(() => {
-		closePeer();
-		stopLocalStream();
-		resetRoomState();
-		setSearch(EMPTY_SEARCH);
-		setMediaState("idle");
-		setMediaError(null);
-	}, [closePeer, resetRoomState, stopLocalStream]);
+	const teardownSession = useCallback(
+		(options?: { keepMedia?: boolean }) => {
+			const keepMedia = options?.keepMedia ?? false;
+			closePeer();
+			resetRoomState();
+			setSearch(EMPTY_SEARCH);
+			if (!keepMedia) {
+				stopLocalStream();
+				setMediaState("idle");
+				setMediaError(null);
+			}
+		},
+		[closePeer, resetRoomState, stopLocalStream],
+	);
 
 	useEffect(() => {
 		if (connectionFailed) setError("server-unreachable");
@@ -271,7 +277,7 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 
 			on<{ reason: string }>("match:ended", ({ reason }) => {
 				searchSessionRef.current = false;
-				teardownSession();
+				teardownSession({ keepMedia: true });
 				setEndedReason(reason ?? null);
 				setStatus("idle");
 			}),
@@ -402,7 +408,7 @@ export function FaceFlipProvider({ children }: { children: ReactNode }) {
 			searchSessionRef.current = true;
 			wasSearchingRef.current = false;
 			filtersRef.current = filters;
-			teardownSession();
+			teardownSession({ keepMedia: true });
 			setEndedReason(null);
 			setStatus("searching");
 			emit("match:skip", filters);

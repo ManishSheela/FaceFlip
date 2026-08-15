@@ -36,7 +36,7 @@ export default function GenderPage() {
           variant="primary"
           block
           size="lg"
-          onClick={() => router.push(ROUTES.matching)}
+          onClick={() => router.push(ROUTES.call)}
         >
           Continue
         </Button>

@@ -7,8 +7,7 @@ import { MATCH_END_MESSAGES, MATCH_ERROR_MESSAGES, ROUTES } from "@/constants";
 import { useFaceFlip } from "@/hooks/use-faceflip";
 import { useMatchFilters } from "@/hooks/use-match-filters";
 import { useSession, useSessionActions } from "@/hooks/use-session";
-import { useElapsedTimer } from "@/hooks/use-elapsed-timer";
-import { Loader2, VideoOff } from "lucide-react";
+import { Loader2, Video, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EndCallDialog } from "@/components/dialogs/end-call-dialog";
 import { ReportDialog } from "@/components/dialogs/report-dialog";
@@ -27,6 +26,7 @@ export default function CallPage() {
 	const { setGenderPref } = useSessionActions();
 	const {
 		status,
+		error,
 		mediaState,
 		mediaError,
 		ensureMedia,
@@ -41,6 +41,7 @@ export default function CallPage() {
 		messages,
 		partnerTyping,
 		friendRequestState,
+		startSearching,
 		skip,
 		stop,
 		sendMessage,
@@ -59,9 +60,12 @@ export default function CallPage() {
 	const [readCount, setReadCount] = useState(0);
 	const leavingRef = useRef(false);
 	const mountedRef = useRef(false);
+	const filtersRef = useRef(filters);
+	filtersRef.current = filters;
 
-	const elapsed = useElapsedTimer();
-	const inCall = status === "matched" || status === "connected";
+	const searching = status === "searching";
+	const partnerFound = status === "matched" || status === "connected";
+	const inCall = searching || partnerFound;
 	const inCallRef = useRef(inCall);
 	inCallRef.current = inCall;
 
@@ -72,15 +76,15 @@ export default function CallPage() {
 	}, [chatOpen, messages.length]);
 
 	useEffect(() => {
-		if (inCall) void ensureMedia();
-	}, [inCall, ensureMedia]);
-
-	useEffect(() => {
-		if (leavingRef.current || inCall) return;
+		if (leavingRef.current || status !== "idle") return;
 
 		if (endedReason) toast(MATCH_END_MESSAGES[endedReason] ?? "Call ended.");
-		router.replace(ROUTES.matching);
-	}, [inCall, endedReason, router]);
+		startSearching(filtersRef.current);
+	}, [status, endedReason, startSearching]);
+
+	useEffect(() => {
+		if (error) toast(MATCH_ERROR_MESSAGES[error]);
+	}, [error]);
 
 	useEffect(() => {
 		const id = requestAnimationFrame(() => {
@@ -96,8 +100,6 @@ export default function CallPage() {
 			}
 		};
 	}, [stop]);
-
-	if (!inCall) return null;
 
 	if (mediaState === "error") {
 		return (
@@ -129,6 +131,10 @@ export default function CallPage() {
 		);
 	}
 
+	const requestMedia = () => {
+		void ensureMedia();
+	};
+
 	const leaveTo = (href: string) => {
 		leavingRef.current = true;
 		router.push(href);
@@ -137,12 +143,11 @@ export default function CallPage() {
 	const endCall = () => {
 		setEndOpen(false);
 		stop();
-		leaveTo(`${ROUTES.postcall}?d=${elapsed}`);
+		leaveTo(ROUTES.landing);
 	};
 
 	const findNext = () => {
 		skip(filters);
-		leaveTo(ROUTES.matching);
 	};
 
 	const canAddFriend =
@@ -156,6 +161,7 @@ export default function CallPage() {
 				localStream={localStream}
 				remoteStream={remoteStream}
 				partnerMedia={partnerMedia}
+				searching={searching}
 			/>
 
 			<CallMenu
@@ -178,6 +184,21 @@ export default function CallPage() {
 				<ChatWithFilter value={genderPref} onChange={setGenderPref} />
 			)}
 
+			{mediaState === "idle" && (
+				<div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-call-bg/90 px-5 text-center backdrop-blur-sm">
+					<Video className="h-7 w-7 text-accent" strokeWidth={1.5} />
+					<p className="m-0 text-sm font-medium text-white">
+						Camera & microphone access needed
+					</p>
+					<p className="m-0 max-w-[280px] text-xs text-call-muted">
+						We only ask your browser for access once you allow it here.
+					</p>
+					<Button variant="primary" onClick={requestMedia}>
+						Allow camera & microphone
+					</Button>
+				</div>
+			)}
+
 			{mediaState === "requesting" && (
 				<div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-call-bg/90 backdrop-blur-sm">
 					<Loader2 className="h-7 w-7 animate-spin text-accent" strokeWidth={1.5} />
@@ -185,7 +206,9 @@ export default function CallPage() {
 						Allow camera and microphone
 					</p>
 					<p className="m-0 text-xs text-call-muted">
-						Your match is waiting for your video.
+						{partnerFound
+							? "Your match is waiting for your video."
+							: "We'll start matching once you're set up."}
 					</p>
 				</div>
 			)}

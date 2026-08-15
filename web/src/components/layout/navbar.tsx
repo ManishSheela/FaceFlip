@@ -1,9 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Moon, Sun, Users } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { APP_NAME, CHROMELESS_ROUTES, ROUTES } from "@/constants";
-import { useFaceFlip } from "@/hooks/use-faceflip";
 import { useSession, useSessionActions } from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import { getInitials } from "@/lib/utils";
@@ -18,11 +17,8 @@ export function Navbar() {
 	const { theme, toggleTheme } = useTheme();
 	const { isAuthenticated, profileName } = useSession();
 	const { signOut } = useSessionActions();
-	const { incomingRequests } = useFaceFlip();
 
 	if (CHROMELESS_ROUTES.includes(pathname)) return null;
-
-	const pendingCount = incomingRequests.length;
 
 	return (
 		<header className="sticky top-0 z-30 flex h-14 flex-none items-center justify-between gap-2 bg-surface px-4 shadow-[0_1px_0_var(--color-divider),0_4px_20px_color-mix(in_srgb,var(--color-accent)_6%,transparent)] sm:px-8">
@@ -45,21 +41,6 @@ export function Navbar() {
 			</button>
 
 			<div className="flex flex-none items-center gap-2">
-				<button
-					type="button"
-					aria-label="Friends"
-					title="Friends"
-					onClick={() => router.push(ROUTES.friends)}
-					className={NAV_ICON_BUTTON}
-				>
-					<Users className="h-[15px] w-[15px]" strokeWidth={1.5} />
-					{pendingCount > 0 && (
-						<span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-on-accent">
-							{pendingCount}
-						</span>
-					)}
-				</button>
-
 				<button
 					type="button"
 					aria-label="Toggle theme"

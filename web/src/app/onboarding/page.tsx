@@ -36,7 +36,7 @@ export default function OnboardingPage() {
 	const handleContinue = () => {
 		if (!selectedGender) return;
 		setUserGender(selectedGender);
-		router.push(isAuthenticated ? ROUTES.gender : ROUTES.matching);
+		router.push(isAuthenticated ? ROUTES.gender : ROUTES.call);
 	};
 
 	return (

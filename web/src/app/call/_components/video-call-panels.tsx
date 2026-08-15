@@ -11,6 +11,7 @@ interface VideoCallPanelsProps {
 	localStream: MediaStream | null;
 	remoteStream: MediaStream | null;
 	partnerMedia?: PartnerMedia;
+	searching: boolean;
 }
 
 const MAX_BLUR_PX = 15;
@@ -37,6 +38,7 @@ export function VideoCallPanels({
 	localStream,
 	remoteStream,
 	partnerMedia,
+	searching,
 }: VideoCallPanelsProps) {
 	const localRef = useStreamRef(localStream);
 	const remoteRef = useStreamRef(remoteStream);
@@ -117,7 +119,7 @@ export function VideoCallPanels({
 					<div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3.5 bg-call-bg/90 backdrop-blur-[4px]">
 						<span className="h-10 w-10 animate-spin rounded-full border-[3px] border-call-panel border-t-accent" />
 						<span className="font-heading text-xs uppercase tracking-[0.04em] text-call-muted">
-							Shuffling faces…
+							{searching ? "Looking for your next flip…" : "Connecting…"}
 						</span>
 					</div>
 				)}
