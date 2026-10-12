@@ -11,7 +11,13 @@ import { CLIENT_ORIGIN, PORT, SERVER_ERROR } from "./constants.js";
 
 const app = express();
 app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  }),
+);
 app.use(cookieParser());
 
 const httpServer = createServer(app);

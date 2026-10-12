@@ -19,8 +19,21 @@ export const GENDER_VALUES = {
 };
 
 export const PREMIUM_PLANS = {
-  week: { code: "WEEK", days: 7 },
-  month: { code: "MONTH", days: 30 },
+  week: { code: "WEEK", days: 7, amountPaise: 4900 },
+  month: { code: "MONTH", days: 30, amountPaise: 14900 },
+};
+
+export const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+export const RAZORPAY_ORDERS_URL = "https://api.razorpay.com/v1/orders";
+export const RAZORPAY_CURRENCY = "INR";
+export const RAZORPAY_REQUEST_TIMEOUT_MS = 10_000;
+export const RAZORPAY_ORDER_PAID_EVENT = "order.paid";
+export const RAZORPAY_SIGNATURE_HEADER = "x-razorpay-signature";
+
+export const PAYMENT_STATUS = {
+  created: "CREATED",
+  paid: "PAID",
 };
 
 export const SERVER_ERROR = "Something went wrong.";
@@ -72,4 +85,7 @@ export const AUTH_ERRORS = {
   nothingToUpdate: "Nothing to update.",
   premiumRequired: "Gender matching is a premium feature.",
   invalidPlan: "Invalid plan.",
+  paymentsUnavailable: "Payments are temporarily unavailable.",
+  invalidPayment: "Payment could not be verified.",
+  paymentNotFound: "Payment not found.",
 };

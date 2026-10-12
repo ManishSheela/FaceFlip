@@ -16,8 +16,13 @@ export const ApiService = {
 		await axios.post("/auth/logout");
 	},
 
-	async checkoutPremium(plan) {
-		const { data } = await axios.post("/premium/checkout", { plan });
+	async createPremiumOrder(plan) {
+		const { data } = await axios.post("/premium/orders", { plan });
+		return data ?? null;
+	},
+
+	async verifyPremiumPayment(payment) {
+		const { data } = await axios.post("/premium/verify", payment);
 		return data?.user ?? null;
 	},
 };

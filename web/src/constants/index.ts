@@ -24,6 +24,16 @@ export const API_URL =
 
 export const REQUEST_TIMEOUT_MS = 15000;
 
+export const RAZORPAY_CHECKOUT_SCRIPT_URL =
+	"https://checkout.razorpay.com/v1/checkout.js";
+
+export const PAYMENT_ERROR_MESSAGES = {
+	unavailable: "Payments are unavailable right now. Please try again later.",
+	checkoutFailed: "Couldn't open the payment window. Please try again.",
+	verifyFailed:
+		"We couldn't confirm your payment yet. If you were charged, premium will activate shortly.",
+};
+
 export const CHAT_REPLY_DELAY_MS = 1000;
 
 export const REPORT_AUTOCLOSE_MS = 1600;

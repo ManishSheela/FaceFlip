@@ -24,6 +24,7 @@ model User {
   friendshipsReceived Friendship[] @relation("Addressee")
   reportsFiled        Report[]     @relation("Reporter")
   reportsReceived     Report[]     @relation("Reported")
+  payments            Payment[]
 }
 
 enum Gender {
@@ -75,4 +76,23 @@ enum ReportReason {
   INAPPROPRIATE
   UNDERAGE
   OTHER
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  plan              PremiumPlan
+  amountPaise       Int
+  status            PaymentStatus @default(CREATED)
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?       @unique
+  createdAt         DateTime      @default(now())
+  paidAt            DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
 }

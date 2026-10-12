@@ -9,7 +9,9 @@ import {
 	type ReactNode,
 } from "react";
 import { toast } from "sonner";
+import { PAYMENT_ERROR_MESSAGES, PREMIUM_PLAN_LABELS } from "@/constants";
 import { ApiService } from "@/lib/api-service";
+import { openRazorpayCheckout } from "@/lib/razorpay";
 import type {
 	GenderPref,
 	GoogleProfile,
@@ -134,13 +136,33 @@ export function SessionProvider({
 				void persist({ gender: userGender });
 			},
 			purchasePremium: async (plan) => {
-				if (!userRef.current) return false;
-				const saved = await ApiService.checkoutPremium(plan);
+				const current = userRef.current;
+				if (!current) return false;
+
+				const order = await ApiService.createPremiumOrder(plan);
+				if (!order) {
+					toast.error(PAYMENT_ERROR_MESSAGES.unavailable);
+					return false;
+				}
+
+				let payment;
+				try {
+					payment = await openRazorpayCheckout(order, {
+						description: PREMIUM_PLAN_LABELS[plan],
+						prefill: { name: current.name, email: current.email },
+					});
+				} catch {
+					toast.error(PAYMENT_ERROR_MESSAGES.checkoutFailed);
+					return false;
+				}
+				if (!payment) return false;
+
+				const saved = await ApiService.verifyPremiumPayment(payment);
 				if (saved) {
 					setUser(saved);
 					return true;
 				}
-				toast.error("Couldn't complete checkout. Please try again.");
+				toast.error(PAYMENT_ERROR_MESSAGES.verifyFailed);
 				return false;
 			},
 			refresh: async () => {
